@@ -543,6 +543,13 @@
             transition: transform 0.3s ease;
         }
 
+        .course-icon img {
+            width: 80px;
+            height: 80px;
+            object-fit: contain;
+            filter: drop-shadow(0 5px 15px rgba(0, 0, 0, 0.3));
+        }
+
         .course-card:hover .course-icon {
             transform: scale(1.2) rotate(5deg);
         }
@@ -716,6 +723,32 @@
             border-top: 1px solid rgba(255, 255, 255, 0.2);
             color: white;
             animation: fadeIn 1s ease-out 1.5s both;
+        }
+
+        .cta-title {
+            font-size: 2.5em;
+            margin-bottom: 20px;
+        }
+
+        .cta-subtitle {
+            font-size: 1.3em;
+            margin-bottom: 20px;
+            color: #b3d9ff;
+        }
+
+        .hero-subtitle {
+            font-size: 1.3em;
+            margin-top: 20px;
+        }
+
+        .courses-subtitle {
+            color: #90caf9;
+        }
+
+        .nav-link-cta {
+            background: linear-gradient(45deg, #42a5f5, #64b5f6);
+            color: #0a0e27;
+            padding: 12px 25px;
         }
 
         .cta-button {
@@ -940,12 +973,16 @@
                 padding: 40px 20px;
             }
 
-            .cta-section h2 {
-                font-size: 1.8em !important;
+            .cta-title {
+                font-size: 1.8em;
             }
 
-            .cta-section p {
-                font-size: 1.1em !important;
+            .cta-subtitle {
+                font-size: 1.1em;
+            }
+
+            .hero-subtitle {
+                font-size: 1em;
             }
 
             .cta-button {
@@ -1080,12 +1117,16 @@
                 padding: 30px 15px;
             }
 
-            .cta-section h2 {
-                font-size: 1.5em !important;
+            .cta-title {
+                font-size: 1.5em;
             }
 
-            .cta-section p {
-                font-size: 1em !important;
+            .cta-subtitle {
+                font-size: 1em;
+            }
+
+            .hero-subtitle {
+                font-size: 0.9em;
             }
 
             .cta-button {
@@ -1137,17 +1178,17 @@
         <nav class="navbar">
             <div class="nav-logo">🔥 IGNITE</div>
             <div class="nav-links">
-                <a href="landing.html" class="nav-link">Home</a>
+                <a href="#" class="nav-link">Home</a>
                 <a href="#courses" class="nav-link">Courses</a>
                 <a href="#team" class="nav-link">Team</a>
-                <a href="ignitecoursedetails.html" class="nav-link" style="background: linear-gradient(45deg, #42a5f5, #64b5f6); color: #0a0e27; padding: 12px 25px;">Book Your Seat</a>
+                <a href="ignitecoursedetails.html" class="nav-link nav-link-cta">Book Your Seat</a>
             </div>
         </nav>
 
         <div class="hero">
             <div class="logo">🔥 IGNITE</div>
             <div class="tagline">by Soulix</div>
-            <p style="font-size: 1.3em; margin-top: 20px;">Empowering Education, Inspiring Excellence</p>
+            <p class="hero-subtitle">Empowering Education, Inspiring Excellence</p>
             <div class="event-date">📅 December 6, 2025</div>
             
             <div class="countdown">
@@ -1231,16 +1272,16 @@
 
         <div class="courses-section" id="courses">
             <h2 class="section-title">📖 Courses Included in Ignite</h2>
-            <p class="description" style="color: #555;">
+            <p class="description courses-subtitle">
                 Explore our comprehensive range of courses designed to equip you with in-demand skills
             </p>
 
             <div class="courses-grid">
                 <div class="course-card">
                     <div class="course-header">
-                        <div class="course-icon">💻</div>
+                        <div class="course-icon"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/html5/html5-original.svg" alt="Web Development HTML5 icon"></div>
                         <div class="course-name">Web Development</div>
-                        <div class="course-duration">12 Weeks • Beginner to Advanced</div>
+                        <div class="course-duration">12 Weeks • Beginner Friendly</div>
                     </div>
                     <div class="course-body">
                         <p class="course-description">
@@ -1257,95 +1298,57 @@
 
                 <div class="course-card">
                     <div class="course-header">
-                        <div class="course-icon">🤖</div>
-                        <div class="course-name">AI & Machine Learning</div>
-                        <div class="course-duration">16 Weeks • Intermediate</div>
-                    </div>
-                    <div class="course-body">
-                        <p class="course-description">
-                            Dive into the world of artificial intelligence and build intelligent systems.
-                        </p>
-                        <ul class="course-highlights">
-                            <li>Python for AI/ML</li>
-                            <li>Neural Networks & Deep Learning</li>
-                            <li>Natural Language Processing</li>
-                            <li>Real-world AI Projects</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="course-card">
-                    <div class="course-header">
-                        <div class="course-icon">📱</div>
-                        <div class="course-name">Mobile App Development</div>
-                        <div class="course-duration">14 Weeks • All Levels</div>
-                    </div>
-                    <div class="course-body">
-                        <p class="course-description">
-                            Create stunning mobile applications for iOS and Android platforms.
-                        </p>
-                        <ul class="course-highlights">
-                            <li>React Native & Flutter</li>
-                            <li>UI/UX Design Principles</li>
-                            <li>API Integration</li>
-                            <li>App Store Publishing</li>
-                        </ul>
-                    </div>
-                </div>
-
-                <div class="course-card">
-                    <div class="course-header">
-                        <div class="course-icon">🎨</div>
-                        <div class="course-name">UI/UX Design</div>
+                        <div class="course-icon"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg" alt="C++ Programming language icon"></div>
+                        <div class="course-name">C++ Programming</div>
                         <div class="course-duration">10 Weeks • Beginner Friendly</div>
                     </div>
                     <div class="course-body">
                         <p class="course-description">
-                            Learn to create beautiful, user-friendly interfaces that users love.
+                            Learn C++ from basics to advanced concepts for high-performance applications.
                         </p>
                         <ul class="course-highlights">
-                            <li>Design Thinking & Research</li>
-                            <li>Figma & Adobe XD</li>
-                            <li>Prototyping & Testing</li>
-                            <li>Portfolio Development</li>
+                            <li>Object-Oriented Programming</li>
+                            <li>Data Structures & Algorithms</li>
+                            <li>Memory Management</li>
+                            <li>STL & Modern C++</li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="course-card">
                     <div class="course-header">
-                        <div class="course-icon">🔐</div>
-                        <div class="course-name">Cybersecurity</div>
-                        <div class="course-duration">12 Weeks • Advanced</div>
+                        <div class="course-icon"><img src="download.jpeg" alt="IoT Internet of Things course icon"></div>
+                        <div class="course-name">IoT (Internet of Things)</div>
+                        <div class="course-duration">12 Weeks • Beginner Friendly</div>
                     </div>
                     <div class="course-body">
                         <p class="course-description">
-                            Protect digital assets and learn ethical hacking techniques.
+                            Build smart connected devices and explore the world of IoT applications.
                         </p>
                         <ul class="course-highlights">
-                            <li>Network Security</li>
-                            <li>Penetration Testing</li>
-                            <li>Cryptography</li>
-                            <li>Security Compliance</li>
+                            <li>Arduino & Raspberry Pi</li>
+                            <li>Sensors & Actuators</li>
+                            <li>Cloud Integration</li>
+                            <li>IoT Security & Protocols</li>
                         </ul>
                     </div>
                 </div>
 
                 <div class="course-card">
                     <div class="course-header">
-                        <div class="course-icon">📊</div>
-                        <div class="course-name">Data Science</div>
-                        <div class="course-duration">14 Weeks • Intermediate</div>
+                        <div class="course-icon"><img src="pythone.png" alt="Python Programming language icon"></div>
+                        <div class="course-name">Python Programming</div>
+                        <div class="course-duration">10 Weeks • Beginner Friendly</div>
                     </div>
                     <div class="course-body">
                         <p class="course-description">
-                            Analyze data and extract meaningful insights for business decisions.
+                            Master Python programming and build powerful applications with ease.
                         </p>
                         <ul class="course-highlights">
-                            <li>Python & R Programming</li>
-                            <li>Statistical Analysis</li>
-                            <li>Data Visualization</li>
-                            <li>Big Data Technologies</li>
+                            <li>Python Fundamentals</li>
+                            <li>Data Analysis & Visualization</li>
+                            <li>Web Scraping & Automation</li>
+                            <li>Real-World Projects</li>
                         </ul>
                     </div>
                 </div>
@@ -1361,7 +1364,7 @@
             <div class="team-grid">
                 <div class="team-member">
                     <div class="team-avatar">👨‍💻</div>
-                    <div class="team-name">Alex Rivera</div>
+                    <div class="team-name">Pranav Navghare</div>
                     <div class="team-role">Lead Developer</div>
                     <p class="team-description">
                         Full-stack expert with 8+ years experience in building scalable educational platforms
@@ -1370,7 +1373,7 @@
 
                 <div class="team-member">
                     <div class="team-avatar">👩‍🎨</div>
-                    <div class="team-name">Sarah Chen</div>
+                    <div class="team-name">Pranav Parate</div>
                     <div class="team-role">UI/UX Designer</div>
                     <p class="team-description">
                         Creative designer passionate about crafting intuitive and engaging user experiences
@@ -1379,7 +1382,7 @@
 
                 <div class="team-member">
                     <div class="team-avatar">👨‍🏫</div>
-                    <div class="team-name">Michael Johnson</div>
+                    <div class="team-name">Prajwal Fating</div>
                     <div class="team-role">Content Strategist</div>
                     <p class="team-description">
                         Education specialist dedicated to creating impactful learning content
@@ -1388,7 +1391,7 @@
 
                 <div class="team-member">
                     <div class="team-avatar">👩‍💼</div>
-                    <div class="team-name">Priya Sharma</div>
+                    <div class="team-name">Tejas Ingole</div>
                     <div class="team-role">Project Manager</div>
                     <p class="team-description">
                         Organizational guru ensuring seamless delivery of educational excellence
@@ -1398,8 +1401,8 @@
         </div>
 
         <div class="cta-section">
-            <h2 style="font-size: 2.5em; margin-bottom: 20px;">🎓 Ready to Ignite Your Future?</h2>
-            <p style="font-size: 1.3em; margin-bottom: 20px; color: #b3d9ff;">
+            <h2 class="cta-title">🎓 Ready to Ignite Your Future?</h2>
+            <p class="cta-subtitle">
                 Join us on December 6th and be part of something extraordinary!
             </p>
             <a href="ignitecoursedetails.html" class="cta-button">📅 Book Your Seat Today</a>
