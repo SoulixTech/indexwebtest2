@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Ignite Course Program by Soulix - Master programming from zero-to-hired with C, Web Development, IoT, and Python courses" />
+  <title>Ignite Courses – Soulix</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    body { 
+      font-family: 'Outfit', sans-serif; 
+      background: #000; 
+      color: #E2E8F0; 
+      margin: 0;
+      padding: 0;
+    }
+
+    /* Glass / 3D card */
+    .course-card {
+      background: rgba(30, 41, 59, 0.25);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 24px;
+      backdrop-filter: blur(12px);
+      transition: all 0.4s ease;
+      transform-style: preserve-3d;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .course-card:hover {
+      transform: rotateY(12deg) scale(1.05);
+      border-color: #38BDF8;
+      box-shadow: 0 8px 30px rgba(56, 189, 248, 0.6);
+    }
+    
+    /* spotlight */
+    .course-card::before {
+      content: '';
+      position: absolute;
+      top: 0; 
+      left: -120%;
+      width: 60%; 
+      height: 100%;
+      background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+      transform: skewX(-30deg);
+      transition: left 0.7s ease;
+      pointer-events: none;
+    }
+    
+    .course-card:hover::before { 
+      left: 140%; 
+    }
+
+    /* Button Neon Glow */
+    .glow-btn {
+      background-image: linear-gradient(90deg, #2563EB, #38BDF8);
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
+      transition: all 0.3s;
+      border: none;
+      cursor: pointer;
+      color: white;
+    }
+    
+    .glow-btn:hover { 
+      transform: scale(1.08); 
+      box-shadow: 0 0 35px rgba(56, 189, 248, 1); 
+    }
+
+    .glow-btn:focus {
+      outline: 2px solid #38BDF8;
+      outline-offset: 2px;
+    }
+
+    /* FLIP CARD ANIMATION */
+    .flip-card { 
+      perspective: 1200px; 
+      width: 100%; 
+      touch-action: manipulation; 
+    }
+    
+    .flip-inner { 
+      position: relative; 
+      min-height: 260px; 
+      transition: transform 0.8s; 
+      transform-style: preserve-3d; 
+    }
+    
+    .flip-card:hover .flip-inner { 
+      transform: rotateY(180deg) scale(1.02); 
+    }
+    
+    .flip-front, .flip-back { 
+      position: absolute; 
+      inset: 0; 
+      backface-visibility: hidden; 
+    }
+    
+    .flip-back { 
+      transform: rotateY(180deg); 
+    }
+
+    /* Hover click sound */
+    .flip-card:hover { 
+      cursor: pointer; 
+    }
+
+    /* MOBILE FIX — full width + tap flip */
+    @media (max-width: 768px) {
+      .flip-inner { 
+        transform: none !important; 
+      }
+      
+      .flip-card.tap-flipped .flip-inner { 
+        transform: rotateY(180deg) !important; 
+      }
+
+      .course-card:hover {
+        transform: scale(1.02);
+      }
+    }
+
+    /* STARFIELD ANIM */
+    @keyframes move {
+      from { 
+        transform: translateY(-100vh); 
+      }
+      to { 
+        transform: translateY(100vh); 
+      }
+    }
+
+    /* Accessibility improvements */
+    a:focus,
+    button:focus {
+      outline: 2px solid #38BDF8;
+      outline-offset: 2px;
+    }
+
+    /* Reduced motion */
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+      }
+    }
+  </style>
+</head>
+<body>
+
+<!-- ⭐ STARFIELD BACKGROUND -->
+<div id="starfield" class="fixed inset-0 -z-10" role="presentation" aria-hidden="true"></div>
+<script>
+  (function makeStars() {
+    const starfield = document.getElementById('starfield');
+    if (!starfield) return;
+    
+    const starCount = 180;
+    const fragment = document.createDocumentFragment();
+    
+    for (let i = 0; i < starCount; i++) {
+      const star = document.createElement('div');
+      star.style.position = 'absolute';
+      star.style.width = '2px';
+      star.style.height = '2px';
+      star.style.background = '#E2E8F0';
+      star.style.borderRadius = '50%';
+      star.style.top = Math.random() * 100 + 'vh';
+      star.style.left = Math.random() * 100 + 'vw';
+      star.style.opacity = Math.random().toString();
+      const duration = Math.random() * 40 + 20;
+      star.style.animation = `move ${duration}s linear infinite`;
+      star.setAttribute('aria-hidden', 'true');
+      fragment.appendChild(star);
+    }
+    
+    starfield.appendChild(fragment);
+  })();
+</script>
+
+<!-- PAGE CONTENT -->
+<div class="min-h-screen flex flex-col pt-20 lg:pt-28 px-6 lg:px-20 space-y-16">
+
+  <!-- HEADER -->
+  <header class="text-center space-y-3">
+    <h1 class="text-4xl md:text-6xl font-bold text-white">Ignite Course Program</h1>
+    <p class="text-gray-400 text-lg md:text-xl">Master programming from zero-to-hired.</p>
+  </header>
+
+  <!-- COURSE CARDS -->
+  <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8" aria-label="Course offerings">
+
+    <!-- C Programming -->
+    <article class="flip-card">
+      <div class="flip-inner course-card p-6 space-y-4">
+        <div class="flip-front p-6 space-y-4">
+          <h2 class="text-xl font-semibold text-cyan-300">C Programming</h2>
+          <p class="text-gray-300 text-sm">Learn Memory, Pointers, Logic building. Strong foundation for Embedded + Systems.</p>
+          <p class="text-sm text-gray-400">⏳ Duration: 3 Weeks</p>
+          <p class="text-sm text-green-400 font-bold">💰 Price: ₹1,499</p>
+        </div>
+        <div class="flip-back flex flex-col justify-center items-center text-center p-4 space-y-3">
+          <p class="text-gray-200 text-sm">Includes 5 mini projects + certificate.</p>
+          <a href="https://forms.visme.co/fv/x9mk9v8n-70e0kw" target="_blank" rel="noopener noreferrer" class="w-full">
+            <button type="button" class="w-full glow-btn py-2 rounded-lg text-sm font-bold" aria-label="Enroll in C Programming course">
+              Enroll Now
+            </button>
+          </a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Web Development -->
+    <article class="flip-card">
+      <div class="flip-inner course-card p-6 space-y-4">
+        <div class="flip-front p-6 space-y-4">
+          <h2 class="text-xl font-semibold text-indigo-300">Web Development</h2>
+          <p class="text-gray-300 text-sm">Website + UI + Tailwind + Responsive + Deployment.</p>
+          <p class="text-sm text-gray-400">⏳ Duration: 4 Weeks</p>
+          <p class="text-sm text-green-400 font-bold">💰 Price: ₹1,999</p>
+        </div>
+        <div class="flip-back flex flex-col justify-center items-center text-center p-4 space-y-3">
+          <p class="text-gray-200 text-sm">Build portfolio website + deploy to web.</p>
+          <a href="https://forms.visme.co/fv/x9mk9v8n-70e0kw" target="_blank" rel="noopener noreferrer" class="w-full">
+            <button type="button" class="w-full glow-btn py-2 rounded-lg text-sm font-bold" aria-label="Enroll in Web Development course">
+              Enroll Now
+            </button>
+          </a>
+        </div>
+      </div>
+    </article>
+
+    <!-- IoT -->
+    <article class="flip-card">
+      <div class="flip-inner course-card p-6 space-y-4">
+        <div class="flip-front p-6 space-y-4">
+          <h2 class="text-xl font-semibold text-teal-300">IoT & ESP32</h2>
+          <p class="text-gray-300 text-sm">Sensors + ESP32 + Firebase + real-time device control.</p>
+          <p class="text-sm text-gray-400">⏳ Duration: 3 Weeks</p>
+          <p class="text-sm text-green-400 font-bold">💰 Price: ₹2,499</p>
+        </div>
+        <div class="flip-back flex flex-col justify-center items-center text-center p-4 space-y-3">
+          <p class="text-gray-200 text-sm">Home automation + Cloud dashboard.</p>
+          <a href="https://forms.visme.co/fv/x9mk9v8n-70e0kw" target="_blank" rel="noopener noreferrer" class="w-full">
+            <button type="button" class="w-full glow-btn py-2 rounded-lg text-sm font-bold" aria-label="Enroll in IoT and ESP32 course">
+              Enroll Now
+            </button>
+          </a>
+        </div>
+      </div>
+    </article>
+
+    <!-- Python -->
+    <article class="flip-card">
+      <div class="flip-inner course-card p-6 space-y-4">
+        <div class="flip-front p-6 space-y-4">
+          <h2 class="text-xl font-semibold text-pink-300">Python Programming</h2>
+          <p class="text-gray-300 text-sm">Python + Projects + Automation + Real-world logic.</p>
+          <p class="text-sm text-gray-400">⏳ Duration: 4 Weeks</p>
+          <p class="text-sm text-green-400 font-bold">💰 Price: ₹2,999</p>
+        </div>
+        <div class="flip-back flex flex-col justify-center items-center text-center p-4 space-y-3">
+          <p class="text-gray-200 text-sm">Mini automation scripts + project.</p>
+          <a href="https://forms.visme.co/fv/x9mk9v8n-70e0kw" target="_blank" rel="noopener noreferrer" class="w-full">
+            <button type="button" class="w-full glow-btn py-2 rounded-lg text-sm font-bold" aria-label="Enroll in Python Programming course">
+              Enroll Now
+            </button>
+          </a>
+        </div>
+      </div>
+    </article>
+
+  </section>
+
+  <!-- CTA SECTION -->
+  <section class="flex flex-col items-center text-center space-y-6 py-16" aria-label="Call to action">
+    <h2 class="text-3xl md:text-4xl font-bold text-white">Ready to Join Ignite?</h2>
+    <p class="text-gray-400 text-lg">Limited seats. Early booking recommended.</p>
+
+    <a href="https://forms.visme.co/fv/x9mk9v8n-70e0kw" target="_blank" rel="noopener noreferrer">
+      <button type="button" class="glow-btn px-10 py-4 text-lg font-bold rounded-full uppercase tracking-wider text-white" aria-label="Book your seat for Ignite program">
+        Book Your Seat Today
+      </button>
+    </a>
+  </section>
+
+</div>
+
+<!-- Audio element for interaction sound -->
+<audio id="hoverSound" preload="none" aria-hidden="true">
+  <source src="https://cdn.pixabay.com/download/audio/2022/03/15/audio_7cd80f7464.mp3?filename=ui-click-136138.mp3" type="audio/mpeg">
+  Your browser does not support the audio element.
+</audio>
+
+<script>
+  // Single declaration of cards + sound (fixes duplicate identifier error)
+  (function initializeCardInteractions() {
+    const cards = document.querySelectorAll('.flip-card');
+    const sound = document.getElementById('hoverSound');
+    
+    if (!cards.length || !sound) return;
+
+    function playSound() {
+      try {
+        sound.currentTime = 0;
+        sound.play().catch(function(error) {
+          // Silently handle autoplay restrictions
+          console.debug('Audio play prevented:', error);
+        });
+      } catch (error) {
+        console.debug('Audio error:', error);
+      }
+    }
+
+    const isTouchDevice = 'ontouchstart' in window || navigator.maxTouchPoints > 0;
+
+    cards.forEach(function(card) {
+      // Hover sound on desktop
+      if (!isTouchDevice) {
+        card.addEventListener('mouseenter', playSound);
+      }
+
+      // Tap flip + sound on mobile
+      card.addEventListener('click', function() {
+        if (isTouchDevice) {
+          card.classList.toggle('tap-flipped');
+          playSound();
+        }
+      });
+
+      // Keyboard accessibility
+      card.setAttribute('tabindex', '0');
+      card.addEventListener('keydown', function(event) {
+        if (event.key === 'Enter' || event.key === ' ') {
+          event.preventDefault();
+          card.classList.toggle('tap-flipped');
+          playSound();
+        }
+      });
+    });
+  })();
+</script>
+</body>
+</html>

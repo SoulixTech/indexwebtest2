@@ -798,23 +798,29 @@
             .navbar {
                 flex-direction: column;
                 gap: 15px;
-                padding: 20px;
+                padding: 15px 20px;
+                border-radius: 15px;
+                margin-bottom: 20px;
             }
 
             .nav-logo {
-                font-size: 1.5em;
+                font-size: 1.8em;
             }
 
             .nav-links {
-                flex-direction: column;
-                gap: 10px;
+                flex-direction: row;
+                gap: 8px;
                 width: 100%;
+                flex-wrap: wrap;
+                justify-content: center;
             }
 
             .nav-link {
-                width: 100%;
+                flex: 0 1 auto;
                 text-align: center;
-                padding: 12px;
+                padding: 10px 15px;
+                font-size: 0.9em;
+                border-radius: 10px;
             }
 
             .hero {
@@ -952,12 +958,27 @@
 
         @media (max-width: 480px) {
             .container {
-                padding: 10px;
+                padding: 5px;
             }
 
             .navbar {
-                padding: 15px;
-                border-radius: 15px;
+                padding: 12px 15px;
+                border-radius: 12px;
+                gap: 12px;
+            }
+
+            .nav-logo {
+                font-size: 1.6em;
+            }
+
+            .nav-links {
+                gap: 6px;
+            }
+
+            .nav-link {
+                padding: 8px 12px;
+                font-size: 0.85em;
+                border-radius: 8px;
             }
 
             .hero {
@@ -1119,7 +1140,7 @@
                 <a href="landing.html" class="nav-link">Home</a>
                 <a href="#courses" class="nav-link">Courses</a>
                 <a href="#team" class="nav-link">Team</a>
-                <a href="booking.html" class="nav-link" style="background: linear-gradient(45deg, #42a5f5, #64b5f6); color: #0a0e27; padding: 12px 25px;">Book Your Seat</a>
+                <a href="ignitecoursedetails.html" class="nav-link" style="background: linear-gradient(45deg, #42a5f5, #64b5f6); color: #0a0e27; padding: 12px 25px;">Book Your Seat</a>
             </div>
         </nav>
 
@@ -1381,7 +1402,7 @@
             <p style="font-size: 1.3em; margin-bottom: 20px; color: #b3d9ff;">
                 Join us on December 6th and be part of something extraordinary!
             </p>
-            <a href="booking.html" class="cta-button">📅 Book Your Seat Today</a>
+            <a href="ignitecoursedetails.html" class="cta-button">📅 Book Your Seat Today</a>
         </div>
     </div>
 
