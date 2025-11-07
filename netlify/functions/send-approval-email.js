@@ -132,35 +132,50 @@ exports.handler = async (event, context) => {
     const approveTemplatePath = path.join(rootDir, 'final_confirmation_email_preview.html');
     const rejectTemplatePath = path.join(rootDir, 'rejected_email_preview.html');
 
+    console.log('📁 Template paths:', {
+      rootDir,
+      approveTemplatePath,
+      rejectTemplatePath,
+      approveExists: fs.existsSync(approveTemplatePath),
+      rejectExists: fs.existsSync(rejectTemplatePath)
+    });
+
     let subject = 'Notification from SOULIX';
     let htmlContent = '';
 
     try {
       if (action === 'reject') {
         subject = '⚠️ Payment Issue — Action Required';
-        let template = fs.existsSync(rejectTemplatePath) ? fs.readFileSync(rejectTemplatePath, 'utf8') : null;
-        if (template) {
+        if (fs.existsSync(rejectTemplatePath)) {
+          let template = fs.readFileSync(rejectTemplatePath, 'utf8');
+          console.log('✅ Rejection template loaded, length:', template.length);
           // Replace standardized placeholders
           template = template.replace(/{{studentName}}/g, studentName);
           template = template.replace(/{{courseName}}/g, courseName || 'IGNITE Training Program');
           template = template.replace(/{{rejectionReason}}/g, rejectionReason || 'Please verify your payment details');
           template = template.replace(/{{transactionId}}/g, transactionId ? `<br>Transaction ID: <b>${transactionId}</b>` : '');
           htmlContent = template;
+        } else {
+          console.error('❌ Rejection template not found at:', rejectTemplatePath);
         }
       } else {
         subject = '✅ Seat Confirmed — IGNITE Training Program';
-        let template = fs.existsSync(approveTemplatePath) ? fs.readFileSync(approveTemplatePath, 'utf8') : null;
-        if (template) {
+        if (fs.existsSync(approveTemplatePath)) {
+          let template = fs.readFileSync(approveTemplatePath, 'utf8');
+          console.log('✅ Approval template loaded, length:', template.length);
           // Replace standardized placeholders
           template = template.replace(/{{studentName}}/g, studentName);
           template = template.replace(/{{courseName}}/g, courseName || 'IGNITE Training Program');
           template = template.replace(/{{transactionId}}/g, transactionId ? `<b>Transaction ID:</b> ${transactionId}` : '');
           htmlContent = template;
+        } else {
+          console.error('❌ Approval template not found at:', approveTemplatePath);
         }
       }
 
       // Fallback minimal HTML if template not found
       if (!htmlContent) {
+        console.warn('⚠️ Using fallback HTML (template not loaded)');
         htmlContent = `<div style="font-family:Arial, sans-serif; color:#111;"><p>Hi ${studentName},</p><p>${action === 'reject' ? 'We could not verify your payment. Please resend proof.' : 'Your seat is confirmed. Welcome!'}</p></div>`;
       }
 
@@ -169,7 +184,7 @@ exports.handler = async (event, context) => {
       htmlContent = `<div><p>Hi ${studentName},</p><p>${action === 'reject' ? 'We could not verify your payment. Please resend proof.' : 'Your seat is confirmed. Welcome!'}</p></div>`;
     }
 
-    // Brevo email payload
+    // Brevo email payload - Remove textContent to force HTML rendering
     const emailPayload = {
       sender: {
         name: "Team SOULIX",
@@ -182,8 +197,7 @@ exports.handler = async (event, context) => {
         }
       ],
       subject,
-      htmlContent,
-      textContent: `Hi ${studentName},\n\n${action === 'reject' ? 'We could not verify your payment for ' + (courseName || 'IGNITE Training Program') + '. Please resend your payment proof.' : 'Your seat for ' + (courseName || 'IGNITE Training Program') + ' is confirmed. Welcome!'}\n\nRegards,\nTeam SOULIX\nsupport@soulix.tech`
+      htmlContent
     };
     
     console.log('📧 Sending email:', { 
@@ -191,7 +205,8 @@ exports.handler = async (event, context) => {
       subject, 
       action,
       htmlLength: htmlContent.length,
-      hasHtml: !!htmlContent 
+      hasHtml: !!htmlContent,
+      templateUsed: action === 'reject' ? 'rejected_email_preview.html' : 'final_confirmation_email_preview.html'
     });
 
     // Call Brevo API
