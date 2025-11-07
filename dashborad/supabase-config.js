@@ -156,6 +156,17 @@ async function saveToSupabase(application) {
     if (!supabase) return false;
     
     try {
+        // Helper to convert dates to ISO format for PostgreSQL
+        function toISO(dateStr) {
+            if (!dateStr) return null;
+            try {
+                const date = new Date(dateStr);
+                return date.toISOString();
+            } catch (e) {
+                return null;
+            }
+        }
+        
         const appData = {
             id: application.id,
             name: application.name,
@@ -163,9 +174,9 @@ async function saveToSupabase(application) {
             phone: application.phone,
             course: application.course,
             status: application.status,
-            applied_date: application.appliedDate,
-            approved_date: application.approvedDate || null,
-            rejected_date: application.rejectedDate || null,
+            applied_date: toISO(application.appliedDate),
+            approved_date: toISO(application.approvedDate),
+            rejected_date: toISO(application.rejectedDate),
             payment_type: application.paymentType || null,
             payment_amount: application.paymentAmount || null,
             payment_status: application.paymentStatus || null,
@@ -329,6 +340,17 @@ async function saveApprovedApplication(application) {
     try {
         const deviceInfo = JSON.parse(sessionStorage.getItem('deviceInfo') || '{}');
         
+        // Helper to convert dates to ISO format
+        function toISO(dateStr) {
+            if (!dateStr) return null;
+            try {
+                const date = new Date(dateStr);
+                return date.toISOString();
+            } catch (e) {
+                return null;
+            }
+        }
+        
         const approvedData = {
             application_id: application.id,
             student_name: application.name,
@@ -341,8 +363,8 @@ async function saveApprovedApplication(application) {
             upi_transaction_id: application.upiTransactionId || null,
             installments_paid: application.installmentsPaid || 0,
             total_installments: application.totalInstallments || 0,
-            applied_date: application.appliedDate,
-            approved_date: application.approvedDate || new Date().toISOString(),
+            applied_date: toISO(application.appliedDate),
+            approved_date: toISO(application.approvedDate) || new Date().toISOString(),
             approved_by_username: sessionStorage.getItem('adminUsername') || 'Admin',
             approved_by_device: deviceInfo.deviceType || 'Unknown',
             approved_by_browser: deviceInfo.browser || 'Unknown',
@@ -378,6 +400,17 @@ async function saveRejectedApplication(application) {
     try {
         const deviceInfo = JSON.parse(sessionStorage.getItem('deviceInfo') || '{}');
         
+        // Helper to convert dates to ISO format
+        function toISO(dateStr) {
+            if (!dateStr) return null;
+            try {
+                const date = new Date(dateStr);
+                return date.toISOString();
+            } catch (e) {
+                return null;
+            }
+        }
+        
         const rejectedData = {
             application_id: application.id,
             student_name: application.name,
@@ -385,8 +418,8 @@ async function saveRejectedApplication(application) {
             student_phone: application.phone,
             course: application.course,
             rejection_reason: application.rejectionReason || 'Not specified',
-            applied_date: application.appliedDate,
-            rejected_date: application.rejectedDate || new Date().toISOString(),
+            applied_date: toISO(application.appliedDate),
+            rejected_date: toISO(application.rejectedDate) || new Date().toISOString(),
             rejected_by_username: sessionStorage.getItem('adminUsername') || 'Admin',
             rejected_by_device: deviceInfo.deviceType || 'Unknown',
             rejected_by_browser: deviceInfo.browser || 'Unknown',

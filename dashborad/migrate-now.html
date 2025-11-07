@@ -99,7 +99,18 @@
                 try {
                     log(`Processing: ${app.name} - ${app.status}`, 'info');
                     
-                    // Convert to Supabase format
+                    // Helper function to convert date to ISO format
+                    function toISO(dateStr) {
+                        if (!dateStr) return null;
+                        try {
+                            const date = new Date(dateStr);
+                            return date.toISOString();
+                        } catch (e) {
+                            return null;
+                        }
+                    }
+                    
+                    // Convert to Supabase format with proper ISO dates
                     const supabaseApp = {
                         id: app.id,
                         name: app.name,
@@ -107,9 +118,9 @@
                         phone: app.phone,
                         course: app.course,
                         status: app.status,
-                        applied_date: app.appliedDate,
-                        approved_date: app.approvedDate || null,
-                        rejected_date: app.rejectedDate || null,
+                        applied_date: toISO(app.appliedDate),
+                        approved_date: toISO(app.approvedDate),
+                        rejected_date: toISO(app.rejectedDate),
                         payment_type: app.paymentType || null,
                         payment_amount: app.paymentAmount || null,
                         payment_status: app.paymentStatus || null,
