@@ -827,12 +827,39 @@ function approveApplication(id) {
         
         saveData();
         
+        console.log('💾 Saving approved application to Supabase...', app.name);
+        
         // Save to Supabase tables
         if (typeof saveApprovedApplication === 'function') {
-            saveApprovedApplication(app);
+            console.log('📞 Calling saveApprovedApplication...');
+            saveApprovedApplication(app).then(result => {
+                console.log('✅ saveApprovedApplication result:', result);
+            }).catch(err => {
+                console.error('❌ saveApprovedApplication error:', err);
+            });
+        } else {
+            console.error('❌ saveApprovedApplication function not found!');
         }
+        
         if (typeof savePaymentTransaction === 'function') {
-            savePaymentTransaction(app);
+            console.log('📞 Calling savePaymentTransaction...');
+            savePaymentTransaction(app).then(result => {
+                console.log('✅ savePaymentTransaction result:', result);
+            }).catch(err => {
+                console.error('❌ savePaymentTransaction error:', err);
+            });
+        } else {
+            console.error('❌ savePaymentTransaction function not found!');
+        }
+        
+        // Also save to main applications table
+        if (typeof saveToSupabase === 'function') {
+            console.log('📞 Calling saveToSupabase...');
+            saveToSupabase(app).then(result => {
+                console.log('✅ saveToSupabase result:', result);
+            }).catch(err => {
+                console.error('❌ saveToSupabase error:', err);
+            });
         }
         
         // Log the approval action with details
