@@ -182,8 +182,17 @@ exports.handler = async (event, context) => {
         }
       ],
       subject,
-      htmlContent
+      htmlContent,
+      textContent: `Hi ${studentName},\n\n${action === 'reject' ? 'We could not verify your payment for ' + (courseName || 'IGNITE Training Program') + '. Please resend your payment proof.' : 'Your seat for ' + (courseName || 'IGNITE Training Program') + ' is confirmed. Welcome!'}\n\nRegards,\nTeam SOULIX\nsupport@soulix.tech`
     };
+    
+    console.log('📧 Sending email:', { 
+      to: studentEmail, 
+      subject, 
+      action,
+      htmlLength: htmlContent.length,
+      hasHtml: !!htmlContent 
+    });
 
     // Call Brevo API
     const response = await fetch('https://api.brevo.com/v3/smtp/email', {
