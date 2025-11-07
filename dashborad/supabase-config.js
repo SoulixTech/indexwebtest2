@@ -87,15 +87,27 @@ function handleRealtimeUpdate(payload) {
 
 // Sync Applications FROM Supabase (Read)
 async function syncFromSupabase() {
-    if (!supabase) return false;
+    if (!supabase) {
+        console.warn('⚠️ Supabase not initialized - skipping sync');
+        return false;
+    }
     
     try {
+        console.log('🔄 Syncing applications from Supabase...');
+        
         const { data, error } = await supabase
             .from('applications')
             .select('*')
             .order('applied_date', { ascending: false });
         
         if (error) throw error;
+        
+        console.log(`📊 Received ${data ? data.length : 0} applications from Supabase`);
+        
+        if (!data || data.length === 0) {
+            console.log('⚠️ No data in Supabase, keeping localStorage data');
+            return false;
+        }
         
         // Update local applications array
         applications = data.map(app => ({
@@ -119,13 +131,18 @@ async function syncFromSupabase() {
             rejectedBy: app.rejected_by
         }));
         
+        // Save to localStorage as backup
+        localStorage.setItem('soulixApplications', JSON.stringify(applications));
+        
         // Update UI
         updateAllStats();
         renderApplications();
         renderRecentApplications();
         updateCharts();
         
-        console.log(`✅ Synced ${applications.length} applications from Supabase`);
+        console.log(`✅ Successfully synced ${applications.length} applications from Supabase`);
+        addAdminLog('success', '📥 Data Synced', `Loaded ${applications.length} applications from Supabase database`);
+        
         return true;
     } catch (error) {
         console.error('❌ Error syncing from Supabase:', error);

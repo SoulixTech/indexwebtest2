@@ -8,7 +8,7 @@ let notifications = 0;
 
 // Initialize Dashboard
 document.addEventListener('DOMContentLoaded', async function() {
-    // First, try to load from localStorage
+    // First, load from localStorage (includes Google Sheets data)
     loadData();
     
     // Initialize Supabase
@@ -21,8 +21,39 @@ document.addEventListener('DOMContentLoaded', async function() {
         if (connectionStatus.connected) {
             console.log('✅ Supabase connected successfully');
             
-            // Load data from Supabase (this will override localStorage)
-            await syncFromSupabase();
+            // DON'T replace all data from Supabase
+            // Instead, merge: Keep pending from localStorage (Google Sheets)
+            // But load approved/rejected from Supabase
+            
+            const { data: approvedData } = await supabase.from('applications').select('*').eq('status', 'Approved');
+            const { data: rejectedData } = await supabase.from('applications').select('*').eq('status', 'Rejected');
+            
+            if (approvedData || rejectedData) {
+                // Merge approved and rejected from Supabase with pending from localStorage
+                const pendingApps = applications.filter(app => app.status === 'Pending');
+                
+                // Convert Supabase data to local format
+                const approvedApps = (approvedData || []).map(app => ({
+                    id: app.id, name: app.name, email: app.email, phone: app.phone,
+                    course: app.course, status: app.status, appliedDate: app.applied_date,
+                    approvedDate: app.approved_date, paymentType: app.payment_type,
+                    paymentAmount: app.payment_amount, paymentStatus: app.payment_status,
+                    upiTransactionId: app.upi_transaction_id, approvedBy: app.approved_by
+                }));
+                
+                const rejectedApps = (rejectedData || []).map(app => ({
+                    id: app.id, name: app.name, email: app.email, phone: app.phone,
+                    course: app.course, status: app.status, appliedDate: app.applied_date,
+                    rejectedDate: app.rejected_date, rejectionReason: app.rejection_reason,
+                    rejectedBy: app.rejected_by
+                }));
+                
+                // Merge all: Pending from Sheets + Approved/Rejected from Supabase
+                applications = [...pendingApps, ...approvedApps, ...rejectedApps];
+                localStorage.setItem('soulixApplications', JSON.stringify(applications));
+                
+                console.log(`✅ Merged data: ${pendingApps.length} pending, ${approvedApps.length} approved, ${rejectedApps.length} rejected`);
+            }
             
             // Save login session to Supabase
             await saveLoginSessionToSupabase();
@@ -30,7 +61,6 @@ document.addEventListener('DOMContentLoaded', async function() {
             // Load and display logs from Supabase
             const logs = await loadLogsFromSupabase(50);
             if (logs && logs.length > 0) {
-                // Display logs from Supabase
                 logs.reverse().forEach(log => {
                     addAdminLog(log.log_type, log.title, log.message, false);
                 });
