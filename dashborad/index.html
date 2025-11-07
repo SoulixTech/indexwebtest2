@@ -110,6 +110,14 @@
                 <span>Payment History</span>
                 <div class="nav-indicator"></div>
             </a>
+            <a href="#" class="nav-item" data-section="logs">
+                <div class="nav-icon">
+                    <i class="fas fa-history"></i>
+                </div>
+                <span>Admin Log</span>
+                <div class="nav-badge" id="logBadge" style="display: none;">0</div>
+                <div class="nav-indicator"></div>
+            </a>
         </nav>
 
         <div class="admin-profile">
@@ -501,6 +509,51 @@
                 </div>
             </div>
         </section>
+
+        <!-- Admin Log Section -->
+        <section id="logs-section" class="content-section">
+            <div class="section-header">
+                <div class="section-title-group">
+                    <h2><i class="fas fa-history"></i> Admin Activity Log</h2>
+                    <p>Real-time tracking of all admin actions and email operations</p>
+                </div>
+                <div class="section-actions">
+                    <button class="btn-action btn-view" id="clearLogBtn">
+                        <i class="fas fa-trash"></i> Clear Log
+                    </button>
+                    <button class="export-btn">
+                        <i class="fas fa-download"></i> Export Log
+                    </button>
+                </div>
+            </div>
+
+            <div class="glass-card">
+                <div class="log-filters" style="display: flex; gap: 12px; margin-bottom: 20px; flex-wrap: wrap;">
+                    <button class="filter-btn active" data-log-filter="all">
+                        <i class="fas fa-list"></i> All
+                    </button>
+                    <button class="filter-btn" data-log-filter="success">
+                        <i class="fas fa-check-circle"></i> Success
+                    </button>
+                    <button class="filter-btn" data-log-filter="error">
+                        <i class="fas fa-times-circle"></i> Errors
+                    </button>
+                    <button class="filter-btn" data-log-filter="info">
+                        <i class="fas fa-info-circle"></i> Info
+                    </button>
+                    <button class="filter-btn" data-log-filter="warning">
+                        <i class="fas fa-exclamation-triangle"></i> Warnings
+                    </button>
+                </div>
+
+                <div id="adminLogBody" class="admin-log-list">
+                    <div class="admin-log-empty">
+                        <i class="fas fa-info-circle"></i>
+                        <p>Activity log will appear here</p>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
 
     <!-- Application Detail Modal -->
@@ -530,22 +583,6 @@
                         <i class="fas fa-paper-plane"></i> Send Email
                     </button>
                 </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Admin Log Panel (Bottom Right) -->
-    <div id="adminLogPanel" class="admin-log-panel">
-        <div class="admin-log-header">
-            <h4><i class="fas fa-history"></i> Admin Log</h4>
-            <button class="admin-log-toggle" id="toggleAdminLog">
-                <i class="fas fa-chevron-down"></i>
-            </button>
-        </div>
-        <div class="admin-log-body" id="adminLogBody">
-            <div class="admin-log-empty">
-                <i class="fas fa-info-circle"></i>
-                <p>Activity log will appear here</p>
             </div>
         </div>
     </div>

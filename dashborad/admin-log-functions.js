@@ -3,15 +3,9 @@
 // ==============================================
 
 function initAdminLog() {
-    const toggleBtn = document.getElementById('toggleAdminLog');
-    const logPanel = document.getElementById('adminLogPanel');
     const closeEmailPreviewBtn = document.getElementById('closeEmailPreviewModal');
-    
-    if (toggleBtn && logPanel) {
-        toggleBtn.addEventListener('click', function() {
-            logPanel.classList.toggle('collapsed');
-        });
-    }
+    const clearLogBtn = document.getElementById('clearLogBtn');
+    const logFilters = document.querySelectorAll('[data-log-filter]');
     
     if (closeEmailPreviewBtn) {
         closeEmailPreviewBtn.addEventListener('click', function() {
@@ -19,8 +13,52 @@ function initAdminLog() {
         });
     }
     
+    if (clearLogBtn) {
+        clearLogBtn.addEventListener('click', function() {
+            if (confirm('Are you sure you want to clear all log entries?')) {
+                const logBody = document.getElementById('adminLogBody');
+                if (logBody) {
+                    logBody.innerHTML = `
+                        <div class="admin-log-empty">
+                            <i class="fas fa-info-circle"></i>
+                            <p>Activity log will appear here</p>
+                        </div>
+                    `;
+                    addAdminLog('info', 'Log Cleared', 'All log entries have been cleared');
+                }
+            }
+        });
+    }
+    
+    // Filter functionality
+    if (logFilters.length > 0) {
+        logFilters.forEach(btn => {
+            btn.addEventListener('click', function() {
+                const filter = this.getAttribute('data-log-filter');
+                
+                // Update active state
+                logFilters.forEach(b => b.classList.remove('active'));
+                this.classList.add('active');
+                
+                // Filter log items
+                const logItems = document.querySelectorAll('.admin-log-item');
+                logItems.forEach(item => {
+                    if (filter === 'all') {
+                        item.style.display = 'block';
+                    } else {
+                        if (item.classList.contains(filter)) {
+                            item.style.display = 'block';
+                        } else {
+                            item.style.display = 'none';
+                        }
+                    }
+                });
+            });
+        });
+    }
+    
     // Log initial session
-    addAdminLog('info', 'Session Started', 'Admin dashboard initialized');
+    addAdminLog('info', 'Session Started', 'Admin dashboard initialized successfully');
 }
 
 function addAdminLog(type, title, message) {
@@ -39,9 +77,19 @@ function addAdminLog(type, title, message) {
     const now = new Date();
     const timeStr = now.toLocaleTimeString('en-US', { hour: '2-digit', minute: '2-digit', second: '2-digit' });
     
+    // Icon based on type
+    let icon = '';
+    switch(type) {
+        case 'success': icon = '<i class="fas fa-check-circle"></i>'; break;
+        case 'error': icon = '<i class="fas fa-times-circle"></i>'; break;
+        case 'warning': icon = '<i class="fas fa-exclamation-triangle"></i>'; break;
+        case 'info': icon = '<i class="fas fa-info-circle"></i>'; break;
+        default: icon = '<i class="fas fa-circle"></i>';
+    }
+    
     logItem.innerHTML = `
         <div class="admin-log-item-header">
-            <span class="admin-log-item-title">${title}</span>
+            <span class="admin-log-item-title">${icon} ${title}</span>
             <span class="admin-log-item-time">${timeStr}</span>
         </div>
         <div class="admin-log-item-message">${message}</div>
@@ -49,14 +97,23 @@ function addAdminLog(type, title, message) {
     
     logBody.insertBefore(logItem, logBody.firstChild);
     
-    // Limit to 50 log items
+    // Limit to 100 log items
     const items = logBody.querySelectorAll('.admin-log-item');
-    if (items.length > 50) {
+    if (items.length > 100) {
         items[items.length - 1].remove();
     }
     
-    // Auto-scroll to top
-    logBody.scrollTop = 0;
+    // Update badge count in sidebar
+    updateLogBadge();
+}
+
+function updateLogBadge() {
+    const logBadge = document.getElementById('logBadge');
+    const logItems = document.querySelectorAll('.admin-log-item');
+    if (logBadge && logItems.length > 0) {
+        logBadge.textContent = logItems.length;
+        logBadge.style.display = 'flex';
+    }
 }
 
 // ==============================================
