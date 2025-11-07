@@ -235,13 +235,62 @@ CREATE POLICY "Allow all access" ON pending_applications FOR ALL USING (true);
 -- 8. ENABLE REAL-TIME UPDATES (CRITICAL!)
 -- ============================================
 -- This allows instant sync across all devices
-ALTER PUBLICATION supabase_realtime ADD TABLE applications;
-ALTER PUBLICATION supabase_realtime ADD TABLE admin_logs;
-ALTER PUBLICATION supabase_realtime ADD TABLE login_sessions;
-ALTER PUBLICATION supabase_realtime ADD TABLE payments;
-ALTER PUBLICATION supabase_realtime ADD TABLE approved_applications;
-ALTER PUBLICATION supabase_realtime ADD TABLE rejected_applications;
-ALTER PUBLICATION supabase_realtime ADD TABLE pending_applications;
+-- Note: If tables are already in publication, these will be skipped
+
+DO $$ 
+BEGIN
+    -- Try to add each table to real-time publication
+    -- If already added, it will be ignored
+    
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_publication_tables 
+        WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'applications'
+    ) THEN
+        ALTER PUBLICATION supabase_realtime ADD TABLE applications;
+    END IF;
+    
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_publication_tables 
+        WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'admin_logs'
+    ) THEN
+        ALTER PUBLICATION supabase_realtime ADD TABLE admin_logs;
+    END IF;
+    
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_publication_tables 
+        WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'login_sessions'
+    ) THEN
+        ALTER PUBLICATION supabase_realtime ADD TABLE login_sessions;
+    END IF;
+    
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_publication_tables 
+        WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'payments'
+    ) THEN
+        ALTER PUBLICATION supabase_realtime ADD TABLE payments;
+    END IF;
+    
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_publication_tables 
+        WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'approved_applications'
+    ) THEN
+        ALTER PUBLICATION supabase_realtime ADD TABLE approved_applications;
+    END IF;
+    
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_publication_tables 
+        WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'rejected_applications'
+    ) THEN
+        ALTER PUBLICATION supabase_realtime ADD TABLE rejected_applications;
+    END IF;
+    
+    IF NOT EXISTS (
+        SELECT 1 FROM pg_publication_tables 
+        WHERE pubname = 'supabase_realtime' AND schemaname = 'public' AND tablename = 'pending_applications'
+    ) THEN
+        ALTER PUBLICATION supabase_realtime ADD TABLE pending_applications;
+    END IF;
+END $$;
 
 -- ============================================
 -- 9. VERIFY TABLES CREATED
