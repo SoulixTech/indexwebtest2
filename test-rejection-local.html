@@ -175,8 +175,12 @@
     </div>
     
     <script>
-        // Local dev server endpoint
-        const API_ENDPOINT = 'http://localhost:8888/.netlify/functions/send-approval-email';
+        // Auto-detect environment: local dev or live Netlify
+        const API_ENDPOINT = window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1'
+            ? 'http://localhost:8888/.netlify/functions/send-approval-email'
+            : '/.netlify/functions/send-approval-email';
+        
+        console.log('🌐 Using API endpoint:', API_ENDPOINT);
         
         // Handle Rejection Form
         document.getElementById('rejectForm').addEventListener('submit', async (e) => {
