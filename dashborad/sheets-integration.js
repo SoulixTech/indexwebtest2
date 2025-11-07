@@ -256,7 +256,7 @@ window.sheetIntegration = {
 // ============================================
 
 // Send approval confirmation email via Netlify Function
-async function sendApprovalEmail(studentEmail, studentName, transactionId, courseName = '') {
+async function sendApprovalEmail(studentEmail, studentName, transactionId, courseName = '', action = 'approve', rejectionReason = '') {
     // Validate inputs
     if (!studentEmail || !studentName) {
         console.error('❌ Missing student email or name');
@@ -270,12 +270,14 @@ async function sendApprovalEmail(studentEmail, studentName, transactionId, cours
             headers: {
                 'Content-Type': 'application/json'
             },
-            body: JSON.stringify({
-                studentEmail,
-                studentName,
-                transactionId,
-                courseName
-            })
+                body: JSON.stringify({
+                    studentEmail,
+                    studentName,
+                    transactionId,
+                    courseName,
+                    action,
+                    rejectionReason
+                })
         });
 
         const result = await response.json();

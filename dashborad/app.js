@@ -712,7 +712,8 @@ async function sendApprovalNotification(app) {
                 app.email,
                 app.name,
                 app.upiTransactionId || app.id,
-                app.course || ''
+                app.course || '',
+                'approve'
             );
             
             if (result.success) {
@@ -729,7 +730,22 @@ async function sendApprovalNotification(app) {
 }
 
 function sendRejectionNotification(app) {
-    // In production, integrate with email/SMS service
+    // Send rejection email using Netlify function (uses reject template)
+    if (typeof window.sendApprovalEmail === 'function') {
+        window.sendApprovalEmail(
+            app.email,
+            app.name,
+            app.upiTransactionId || app.id,
+            app.course || '',
+            'reject',
+            app.rejectionReason || ''
+        ).then(result => {
+            if (result && result.success) console.log('✅ Rejection email sent to:', app.email);
+            else console.warn('⚠️ Rejection email failed:', result && result.error);
+        }).catch(err => console.error('❌ Error sending rejection email:', err));
+    } else {
+        console.warn('⚠️ Email function not available. Make sure sheets-integration.js is loaded.');
+    }
 }
 
 // Toast Notification

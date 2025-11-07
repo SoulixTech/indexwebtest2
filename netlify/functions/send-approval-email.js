@@ -93,8 +93,8 @@ exports.handler = async (event, context) => {
   }
 
   try {
-    // Parse request body
-    const { studentEmail, studentName, transactionId, courseName } = JSON.parse(event.body);
+  // Parse request body
+  const { studentEmail, studentName, transactionId, courseName, action = 'approve', rejectionReason = '' } = JSON.parse(event.body);
 
     // Validate required fields
     if (!studentEmail || !studentName) {
@@ -123,6 +123,52 @@ exports.handler = async (event, context) => {
       };
     }
 
+    // Load HTML templates from repository files and use them based on action
+    const fs = require('fs');
+    const path = require('path');
+
+    // Template paths - function lives in netlify/functions so go up two levels to project root
+    const rootDir = path.resolve(__dirname, '..', '..');
+    const approveTemplatePath = path.join(rootDir, 'final_confirmation_email_preview.html');
+    const rejectTemplatePath = path.join(rootDir, 'rejected_email_preview.html');
+
+    let subject = 'Notification from SOULIX';
+    let htmlContent = '';
+
+    try {
+      if (action === 'reject') {
+        subject = '⚠️ Payment Issue — Action Required';
+        let template = fs.existsSync(rejectTemplatePath) ? fs.readFileSync(rejectTemplatePath, 'utf8') : null;
+        if (template) {
+          // Replace any double-curly placeholders with student name
+          template = template.replace(/{{[^}]*}}/g, studentName);
+          // Optionally insert rejection reason if present
+          if (rejectionReason) template = template.replace(/\bREJECTION_REASON\b/g, rejectionReason);
+          htmlContent = template;
+        }
+      } else {
+        subject = '✅ Seat Confirmed — IGNITE Training Program';
+        let template = fs.existsSync(approveTemplatePath) ? fs.readFileSync(approveTemplatePath, 'utf8') : null;
+        if (template) {
+          // Replace name placeholders
+          template = template.replace(/{{[^}]*}}/g, studentName);
+          // Insert course and transaction details where appropriate
+          if (courseName) template = template.replace(/IGNITE Training Program/g, 'IGNITE Training Program');
+          template = template.replace(/YOUR_WHATSAPP_GROUP_LINK_HERE/g, 'https://wa.me/919356671329');
+          htmlContent = template;
+        }
+      }
+
+      // Fallback minimal HTML if template not found
+      if (!htmlContent) {
+        htmlContent = `<div style="font-family:Arial, sans-serif; color:#111;"><p>Hi ${studentName},</p><p>${action === 'reject' ? 'We could not verify your payment. Please resend proof.' : 'Your seat is confirmed. Welcome!'}</p></div>`;
+      }
+
+    } catch (err) {
+      console.error('❌ Template load error:', err);
+      htmlContent = `<div><p>Hi ${studentName},</p><p>${action === 'reject' ? 'We could not verify your payment. Please resend proof.' : 'Your seat is confirmed. Welcome!'}</p></div>`;
+    }
+
     // Brevo email payload
     const emailPayload = {
       sender: {
@@ -130,59 +176,13 @@ exports.handler = async (event, context) => {
         email: "support@soulix.tech"
       },
       to: [
-        { 
-          email: studentEmail, 
-          name: studentName 
+        {
+          email: studentEmail,
+          name: studentName
         }
       ],
-      subject: "✅ Seat Confirmed — IGNITE Training Program",
-      htmlContent: `
-      <div style="background-color:#000; padding:40px 20px; font-family:Arial, sans-serif; color:#fff;">
-          <div style="max-width:600px; margin:0 auto;">
-              <img src="https://lh3.googleusercontent.com/d/1QP4RpN3F1pc9lIN7lNRgCFYQIU-3skGH" 
-                  alt="SOULIX Logo" 
-                  style="width:160px; display:block; margin:0 auto 30px;">
-              
-              <div style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
-                          padding:30px; border-radius:15px; text-align:center;">
-                  <h2 style="color:#00FFAA; margin:0 0 20px;">🎉 Seat Confirmed!</h2>
-              </div>
-              
-              <div style="background:#1a1a1a; padding:30px; border-radius:15px; margin-top:20px;">
-                  <p style="font-size:16px; line-height:1.6;">Hi <b style="color:#00FFAA;">${studentName}</b>,</p>
-                  
-                  <p style="font-size:16px; line-height:1.6;">
-                      Congratulations! Your payment and details have been successfully verified.
-                  </p>
-                  
-                  ${courseName ? `<p style="font-size:16px; line-height:1.6;"><b>Course:</b> <span style="color:#00FFAA;">${courseName}</span></p>` : ''}
-                  
-                  ${transactionId ? `<p style="font-size:16px; line-height:1.6;"><b>Transaction ID:</b> <span style="color:#00FFAA;">${transactionId}</span></p>` : ''}
-                  
-                  <div style="background:#000; padding:20px; border-radius:10px; margin:20px 0; border-left:4px solid #00FFAA;">
-                      <p style="margin:0; font-size:16px;">
-                          <b>Welcome to IGNITE Training Program! 🔥</b>
-                      </p>
-                  </div>
-                  
-                  <p style="font-size:16px; line-height:1.6;">
-                      We'll send you the joining instructions and course materials shortly via email.
-                  </p>
-                  
-                  <p style="font-size:16px; line-height:1.6;">
-                      If you have any questions, feel free to reach out to us anytime.
-                  </p>
-              </div>
-              
-              <div style="margin-top:30px; padding-top:20px; border-top:1px solid #333; text-align:center;">
-                  <p style="color:#888; font-size:14px; margin:5px 0;">
-                      <b>Team SOULIX</b><br>
-                      📧 support@soulix.tech<br>
-                      🔥 Empowering Education, Inspiring Excellence
-                  </p>
-              </div>
-          </div>
-      </div>`
+      subject,
+      htmlContent
     };
 
     // Call Brevo API
