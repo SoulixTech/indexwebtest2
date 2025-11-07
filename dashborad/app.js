@@ -25,35 +25,44 @@ document.addEventListener('DOMContentLoaded', async function() {
             // Instead, merge: Keep pending from localStorage (Google Sheets)
             // But load approved/rejected from Supabase
             
-            const { data: approvedData } = await supabase.from('applications').select('*').eq('status', 'Approved');
-            const { data: rejectedData } = await supabase.from('applications').select('*').eq('status', 'Rejected');
+            console.log('🔍 Before merge - applications.length:', applications.length);
+            console.log('📊 Before merge - Pending count:', applications.filter(app => app.status === 'Pending').length);
             
-            if (approvedData || rejectedData) {
-                // Merge approved and rejected from Supabase with pending from localStorage
-                const pendingApps = applications.filter(app => app.status === 'Pending');
-                
-                // Convert Supabase data to local format
-                const approvedApps = (approvedData || []).map(app => ({
-                    id: app.id, name: app.name, email: app.email, phone: app.phone,
-                    course: app.course, status: app.status, appliedDate: app.applied_date,
-                    approvedDate: app.approved_date, paymentType: app.payment_type,
-                    paymentAmount: app.payment_amount, paymentStatus: app.payment_status,
-                    upiTransactionId: app.upi_transaction_id, approvedBy: app.approved_by
-                }));
-                
-                const rejectedApps = (rejectedData || []).map(app => ({
-                    id: app.id, name: app.name, email: app.email, phone: app.phone,
-                    course: app.course, status: app.status, appliedDate: app.applied_date,
-                    rejectedDate: app.rejected_date, rejectionReason: app.rejection_reason,
-                    rejectedBy: app.rejected_by
-                }));
-                
-                // Merge all: Pending from Sheets + Approved/Rejected from Supabase
-                applications = [...pendingApps, ...approvedApps, ...rejectedApps];
-                localStorage.setItem('soulixApplications', JSON.stringify(applications));
-                
-                console.log(`✅ Merged data: ${pendingApps.length} pending, ${approvedApps.length} approved, ${rejectedApps.length} rejected`);
-            }
+            const { data: approvedData, error: approvedError } = await supabase.from('applications').select('*').eq('status', 'Approved');
+            const { data: rejectedData, error: rejectedError } = await supabase.from('applications').select('*').eq('status', 'Rejected');
+            
+            console.log('📥 Supabase approved:', approvedData?.length || 0);
+            console.log('📥 Supabase rejected:', rejectedData?.length || 0);
+            
+            if (approvedError) console.error('❌ Approved query error:', approvedError);
+            if (rejectedError) console.error('❌ Rejected query error:', rejectedError);
+            
+            // Merge approved and rejected from Supabase with pending from localStorage
+            const pendingApps = applications.filter(app => app.status === 'Pending');
+            console.log('📋 Pending from localStorage:', pendingApps.length);
+            
+            // Convert Supabase data to local format
+            const approvedApps = (approvedData || []).map(app => ({
+                id: app.id, name: app.name, email: app.email, phone: app.phone,
+                course: app.course, status: app.status, appliedDate: app.applied_date,
+                approvedDate: app.approved_date, paymentType: app.payment_type,
+                paymentAmount: app.payment_amount, paymentStatus: app.payment_status,
+                upiTransactionId: app.upi_transaction_id, approvedBy: app.approved_by
+            }));
+            
+            const rejectedApps = (rejectedData || []).map(app => ({
+                id: app.id, name: app.name, email: app.email, phone: app.phone,
+                course: app.course, status: app.status, appliedDate: app.applied_date,
+                rejectedDate: app.rejected_date, rejectionReason: app.rejection_reason,
+                rejectedBy: app.rejected_by
+            }));
+            
+            // Merge all: Pending from Sheets + Approved/Rejected from Supabase
+            applications = [...pendingApps, ...approvedApps, ...rejectedApps];
+            localStorage.setItem('soulixApplications', JSON.stringify(applications));
+            
+            console.log(`✅ After merge - Total: ${applications.length} (${pendingApps.length} pending, ${approvedApps.length} approved, ${rejectedApps.length} rejected)`);
+            console.log('💾 Saved merged data to localStorage');
             
             // Save login session to Supabase
             await saveLoginSessionToSupabase();
