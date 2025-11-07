@@ -61,7 +61,7 @@ function initAdminLog() {
     addAdminLog('info', 'Session Started', 'Admin dashboard initialized successfully');
 }
 
-function addAdminLog(type, title, message) {
+function addAdminLog(type, title, message, saveToSupabaseFlag = true) {
     const logBody = document.getElementById('adminLogBody');
     if (!logBody) return;
     
@@ -105,6 +105,13 @@ function addAdminLog(type, title, message) {
     
     // Update badge count in sidebar
     updateLogBadge();
+    
+    // Save to Supabase if flag is true and function exists
+    if (saveToSupabaseFlag && typeof saveLogToSupabase === 'function') {
+        saveLogToSupabase(type, title, message).catch(err => {
+            console.error('Failed to save log to Supabase:', err);
+        });
+    }
 }
 
 function updateLogBadge() {

@@ -10,7 +10,22 @@ let notifications = 0;
 document.addEventListener('DOMContentLoaded', function() {
     loadData();
     
-    // Log login session details
+    // Initialize Supabase
+    const supabaseReady = initSupabase();
+    if (supabaseReady) {
+        // Load data from Supabase first
+        syncFromSupabase().then(() => {
+            updateAllStats();
+            renderApplications();
+            renderRecentApplications();
+            updateCharts();
+        });
+        
+        // Save login session to Supabase
+        saveLoginSessionToSupabase();
+    }
+    
+    // Log login session details (local)
     logLoginSession();
     
     initNavigation();
@@ -20,6 +35,16 @@ document.addEventListener('DOMContentLoaded', function() {
     initBackToTop();
     initKeyboardShortcuts();
     initAdminLog();
+    
+    // Load logs from Supabase
+    if (supabaseReady) {
+        loadLogsFromSupabase(50).then(logs => {
+            logs.forEach(log => {
+                addAdminLog(log.log_type, log.title, log.message, false); // false = don't save to Supabase again
+            });
+        });
+    }
+    
     updateAllStats();
     renderApplications();
     renderRecentApplications();
@@ -50,7 +75,7 @@ document.addEventListener('DOMContentLoaded', function() {
             renderApplications();
             renderRecentApplications();
             updateCharts();
-            addAdminLog('info', 'Data Synced', 'Updated from another tab/device');
+            addAdminLog('info', 'Data Synced', 'Updated from another tab/device', false);
         }
     });
 });
@@ -311,6 +336,7 @@ function loadData() {
 }
 
 function saveData() {
+    // Save to localStorage (fallback)
     localStorage.setItem('soulixApplications', JSON.stringify(applications));
     
     // Also set a timestamp to track data changes
@@ -320,6 +346,16 @@ function saveData() {
     window.dispatchEvent(new CustomEvent('dataUpdated', { 
         detail: { timestamp: Date.now() } 
     }));
+    
+    // Save to Supabase if available
+    if (typeof saveToSupabase === 'function') {
+        // Save all applications to Supabase
+        applications.forEach(app => {
+            saveToSupabase(app).catch(err => {
+                console.error('Failed to save to Supabase:', err);
+            });
+        });
+    }
 }
 
 // Navigation

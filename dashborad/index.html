@@ -661,8 +661,13 @@
     </button>
     
     <!-- Application Scripts (Optimized: Deferred loading) -->
+    <!-- Supabase Client Library -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    
+    <!-- Dashboard Scripts -->
     <script defer src="sheets-integration.js"></script>
     <script defer src="admin-log-functions.js"></script>
+    <script defer src="supabase-config.js"></script>
     <script defer src="app.js"></script>
     <script>
         // Initialize auto-sync (Optimized)
@@ -679,5 +684,6 @@
             initSync();
         }
     </script>
+
 </body>
 </html>
