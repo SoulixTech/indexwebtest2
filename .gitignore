@@ -1,2 +1,30 @@
-"*.exe" 
-"*.exe" 
+# Environment variables (NEVER commit API keys!)
+.env
+.env.local
+.env.production
+
+# Netlify
+.netlify/
+netlify/
+
+# Node modules (if using)
+node_modules/
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Logs
+*.log
+npm-debug.log*
+
+# Temporary files
+*.tmp
+*.temp

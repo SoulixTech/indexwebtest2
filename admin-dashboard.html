@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="robots" content="noindex, nofollow">
+  <meta name="googlebot" content="noindex, nofollow">
+  <title>System Access</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;700&display=swap" rel="stylesheet" />
+  <style>
+    body { 
+      font-family: 'Outfit', sans-serif; 
+      background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+      color: #E2E8F0; 
+      margin: 0;
+      padding: 0;
+      min-height: 100vh;
+    }
+
+    /* Login Screen */
+    .login-container {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+
+    .login-box {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 24px;
+      backdrop-filter: blur(12px);
+      padding: 40px;
+      max-width: 400px;
+      width: 100%;
+      box-shadow: 0 8px 30px rgba(56, 189, 248, 0.3);
+    }
+
+    .input-field {
+      background: rgba(15, 23, 42, 0.6);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 12px;
+      padding: 12px 16px;
+      width: 100%;
+      color: white;
+      font-size: 16px;
+      transition: all 0.3s;
+    }
+
+    .input-field:focus {
+      outline: none;
+      border-color: #38BDF8;
+      box-shadow: 0 0 15px rgba(56, 189, 248, 0.4);
+    }
+
+    .login-btn {
+      background: linear-gradient(90deg, #2563EB, #38BDF8);
+      border: none;
+      border-radius: 12px;
+      padding: 14px;
+      width: 100%;
+      color: white;
+      font-weight: bold;
+      font-size: 16px;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 0 25px rgba(56, 189, 248, 0.6);
+    }
+
+    .login-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 0 35px rgba(56, 189, 248, 1);
+    }
+
+    /* Dashboard */
+    .dashboard {
+      display: none;
+      padding: 40px 20px;
+    }
+
+    .dashboard.active {
+      display: block;
+    }
+
+    .dashboard-header {
+      background: rgba(30, 41, 59, 0.8);
+      border: 1px solid rgba(56, 189, 248, 0.4);
+      border-radius: 24px;
+      padding: 30px;
+      margin-bottom: 30px;
+      backdrop-filter: blur(12px);
+    }
+
+    .stat-card {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 16px;
+      padding: 24px;
+      backdrop-filter: blur(12px);
+      transition: all 0.3s;
+    }
+
+    .stat-card:hover {
+      border-color: #38BDF8;
+      box-shadow: 0 8px 30px rgba(56, 189, 248, 0.4);
+      transform: translateY(-5px);
+    }
+
+    .stat-number {
+      font-size: 3em;
+      font-weight: bold;
+      background: linear-gradient(90deg, #38BDF8, #60A5FA);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+
+    .action-btn {
+      background: linear-gradient(90deg, #2563EB, #38BDF8);
+      border: none;
+      border-radius: 12px;
+      padding: 12px 24px;
+      color: white;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s;
+      box-shadow: 0 4px 15px rgba(56, 189, 248, 0.4);
+    }
+
+    .action-btn:hover {
+      transform: scale(1.05);
+      box-shadow: 0 6px 25px rgba(56, 189, 248, 0.6);
+    }
+
+    .logout-btn {
+      background: linear-gradient(90deg, #EF4444, #DC2626);
+      box-shadow: 0 4px 15px rgba(239, 68, 68, 0.4);
+    }
+
+    .logout-btn:hover {
+      box-shadow: 0 6px 25px rgba(239, 68, 68, 0.6);
+    }
+
+    .data-table {
+      background: rgba(30, 41, 59, 0.6);
+      border: 1px solid rgba(56, 189, 248, 0.3);
+      border-radius: 16px;
+      overflow: hidden;
+      backdrop-filter: blur(12px);
+    }
+
+    .data-table table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    .data-table th {
+      background: rgba(56, 189, 248, 0.2);
+      padding: 16px;
+      text-align: left;
+      font-weight: 600;
+      border-bottom: 1px solid rgba(56, 189, 248, 0.3);
+    }
+
+    .data-table td {
+      padding: 16px;
+      border-bottom: 1px solid rgba(56, 189, 248, 0.1);
+    }
+
+    .data-table tr:hover {
+      background: rgba(56, 189, 248, 0.1);
+    }
+
+    .error-message {
+      background: rgba(239, 68, 68, 0.2);
+      border: 1px solid #EF4444;
+      color: #FCA5A5;
+      padding: 12px;
+      border-radius: 8px;
+      margin-top: 10px;
+      display: none;
+    }
+
+    .error-message.show {
+      display: block;
+    }
+  </style>
+</head>
+<body>
+
+<!-- LOGIN SCREEN -->
+<div id="loginScreen" class="login-container">
+  <div class="login-box">
+    <h1 style="text-align: center; font-size: 2em; margin-bottom: 10px; color: #38BDF8;">🔐 Admin Access</h1>
+    <p style="text-align: center; color: #94A3B8; margin-bottom: 30px;">Enter credentials to access dashboard</p>
+    
+    <form id="loginForm" onsubmit="return false;">
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 8px; color: #CBD5E1; font-weight: 600;">Username</label>
+        <input type="text" id="username" class="input-field" placeholder="Enter username" autocomplete="off" required />
+      </div>
+      
+      <div style="margin-bottom: 20px;">
+        <label style="display: block; margin-bottom: 8px; color: #CBD5E1; font-weight: 600;">Password</label>
+        <input type="password" id="password" class="input-field" placeholder="Enter password" required />
+      </div>
+      
+      <button type="submit" class="login-btn" onclick="handleLogin()">Login</button>
+      
+      <div id="errorMessage" class="error-message">
+        ❌ Invalid credentials. Please try again.
+      </div>
+    </form>
+
+    <div style="margin-top: 20px; text-align: center;">
+      <a href="index.html" style="color: #38BDF8; text-decoration: none; font-size: 14px;">← Back to Home</a>
+    </div>
+  </div>
+</div>
+
+<!-- DASHBOARD -->
+<div id="dashboard" class="dashboard">
+  <div class="dashboard-header">
+    <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 20px;">
+      <div>
+        <h1 style="font-size: 2.5em; margin: 0; color: #38BDF8;">Admin Dashboard</h1>
+        <p style="color: #94A3B8; margin-top: 5px;">Welcome back, Administrator</p>
+      </div>
+      <button class="action-btn logout-btn" onclick="handleLogout()">Logout</button>
+    </div>
+  </div>
+
+  <!-- STATISTICS -->
+  <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 40px;">
+    <div class="stat-card">
+      <div style="color: #94A3B8; font-size: 0.9em; margin-bottom: 10px;">Total Enrollments</div>
+      <div class="stat-number">0</div>
+      <div style="color: #10B981; margin-top: 10px; font-size: 0.85em;">📈 Synced with Visme</div>
+    </div>
+
+    <div class="stat-card">
+      <div style="color: #94A3B8; font-size: 0.9em; margin-bottom: 10px;">Active Courses</div>
+      <div class="stat-number">4</div>
+      <div style="color: #38BDF8; margin-top: 10px; font-size: 0.85em;">Web • IoT • C • Python</div>
+    </div>
+
+    <div class="stat-card">
+      <div style="color: #94A3B8; font-size: 0.9em; margin-bottom: 10px;">Page Views</div>
+      <div class="stat-number">--</div>
+      <div style="color: #94A3B8; margin-top: 10px; font-size: 0.85em;">Connect analytics</div>
+    </div>
+
+    <div class="stat-card">
+      <div style="color: #94A3B8; font-size: 0.9em; margin-bottom: 10px;">Revenue</div>
+      <div class="stat-number">₹0</div>
+      <div style="color: #F59E0B; margin-top: 10px; font-size: 0.85em;">💰 Total collected</div>
+    </div>
+  </div>
+
+  <!-- QUICK ACTIONS -->
+  <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 16px; padding: 30px; margin-bottom: 40px; backdrop-filter: blur(12px);">
+    <h2 style="font-size: 1.8em; margin-bottom: 20px; color: #38BDF8;">⚡ Quick Actions</h2>
+    <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+      <button class="action-btn" onclick="window.open('https://forms.visme.co/formsPlayer/x9mk9v8n-untitled-project', '_blank')">
+        📝 Open Enrollment Form
+      </button>
+      <button class="action-btn" onclick="window.open('https://my.visme.co/', '_blank')">
+        📊 View Visme Dashboard
+      </button>
+      <button class="action-btn" onclick="window.location.href='ignitecoursedetails.html'">
+        📚 Manage Courses
+      </button>
+      <button class="action-btn" onclick="window.location.href='index.html'">
+        🏠 View Website
+      </button>
+    </div>
+  </div>
+
+  <!-- RECENT ACTIVITY -->
+  <div style="background: rgba(30, 41, 59, 0.6); border: 1px solid rgba(56, 189, 248, 0.3); border-radius: 16px; padding: 30px; backdrop-filter: blur(12px);">
+    <h2 style="font-size: 1.8em; margin-bottom: 20px; color: #38BDF8;">📋 Recent Activity</h2>
+    <div class="data-table">
+      <table>
+        <thead>
+          <tr>
+            <th>Date</th>
+            <th>Activity</th>
+            <th>Details</th>
+            <th>Status</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td>Nov 7, 2025</td>
+            <td>Dashboard Created</td>
+            <td>Admin dashboard initialized</td>
+            <td><span style="color: #10B981; font-weight: 600;">✓ Active</span></td>
+          </tr>
+          <tr>
+            <td>Nov 7, 2025</td>
+            <td>Team Images Added</td>
+            <td>Updated team section with photos</td>
+            <td><span style="color: #10B981; font-weight: 600;">✓ Complete</span></td>
+          </tr>
+          <tr>
+            <td>Nov 6, 2025</td>
+            <td>Course Prices Updated</td>
+            <td>Updated all course pricing</td>
+            <td><span style="color: #10B981; font-weight: 600;">✓ Complete</span></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- SYSTEM INFO -->
+  <div style="margin-top: 40px; padding: 20px; text-align: center; color: #64748B; font-size: 0.85em;">
+    <p>🔒 Secure Admin Panel • Last Login: <span id="lastLogin">--</span></p>
+    <p>Session ID: <span id="sessionId">--</span></p>
+  </div>
+</div>
+
+<script>
+  // Admin credentials (Change these to your secure credentials)
+  const ADMIN_USERNAME = 'admin';
+  const ADMIN_PASSWORD = 'soulix2025';
+
+  // Check if already logged in
+  window.addEventListener('DOMContentLoaded', function() {
+    const isLoggedIn = sessionStorage.getItem('adminLoggedIn');
+    if (isLoggedIn === 'true') {
+      showDashboard();
+    }
+    
+    // Update session ID
+    document.getElementById('sessionId').textContent = generateSessionId();
+    document.getElementById('lastLogin').textContent = new Date().toLocaleString();
+  });
+
+  function handleLogin() {
+    const username = document.getElementById('username').value;
+    const password = document.getElementById('password').value;
+    const errorMsg = document.getElementById('errorMessage');
+
+    if (username === ADMIN_USERNAME && password === ADMIN_PASSWORD) {
+      // Successful login
+      sessionStorage.setItem('adminLoggedIn', 'true');
+      sessionStorage.setItem('adminLoginTime', new Date().toISOString());
+      showDashboard();
+      errorMsg.classList.remove('show');
+    } else {
+      // Failed login
+      errorMsg.classList.add('show');
+      document.getElementById('password').value = '';
+      
+      // Shake animation
+      const loginBox = document.querySelector('.login-box');
+      loginBox.style.animation = 'shake 0.5s';
+      setTimeout(() => {
+        loginBox.style.animation = '';
+      }, 500);
+    }
+  }
+
+  function handleLogout() {
+    sessionStorage.removeItem('adminLoggedIn');
+    sessionStorage.removeItem('adminLoginTime');
+    document.getElementById('loginScreen').style.display = 'flex';
+    document.getElementById('dashboard').classList.remove('active');
+    document.getElementById('username').value = '';
+    document.getElementById('password').value = '';
+  }
+
+  function showDashboard() {
+    document.getElementById('loginScreen').style.display = 'none';
+    document.getElementById('dashboard').classList.add('active');
+    
+    const loginTime = sessionStorage.getItem('adminLoginTime');
+    if (loginTime) {
+      document.getElementById('lastLogin').textContent = new Date(loginTime).toLocaleString();
+    }
+  }
+
+  function generateSessionId() {
+    return 'SX-' + Math.random().toString(36).substr(2, 9).toUpperCase();
+  }
+
+  // Press Enter to submit
+  document.getElementById('password').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      handleLogin();
+    }
+  });
+
+  document.getElementById('username').addEventListener('keypress', function(e) {
+    if (e.key === 'Enter') {
+      document.getElementById('password').focus();
+    }
+  });
+
+  // Add shake animation
+  const style = document.createElement('style');
+  style.textContent = `
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-10px); }
+      75% { transform: translateX(10px); }
+    }
+  `;
+  document.head.appendChild(style);
+</script>
+
+</body>
+</html>

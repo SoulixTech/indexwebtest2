@@ -1264,19 +1264,19 @@
 
                 <div class="course-card">
                     <div class="course-header">
-                        <div class="course-icon"><img src="https://cdn.jsdelivr.net/gh/devicons/devicon/icons/cplusplus/cplusplus-original.svg" alt="C++ Programming"></div>
-                        <div class="course-name">C++ Programming</div>
+                        <div class="course-icon"><img src="C_Programming_Language.svg.png" alt="C Programming"></div>
+                        <div class="course-name">C Programming</div>
                         <div class="course-duration">10 Weeks • Beginner Friendly</div>
                     </div>
                     <div class="course-body">
                         <p class="course-description">
-                            Learn C++ from basics to advanced concepts for high-performance applications.
+                            Learn C from basics to advanced concepts for high-performance applications.
                         </p>
                         <ul class="course-highlights">
-                            <li>Object-Oriented Programming</li>
+                            <li>C Language Fundamentals</li>
                             <li>Data Structures & Algorithms</li>
-                            <li>Memory Management</li>
-                            <li>STL & Modern C++</li>
+                            <li>Memory Management & Pointers</li>
+                            <li>Embedded Systems Basics</li>
                         </ul>
                     </div>
                 </div>
@@ -1332,7 +1332,7 @@
                     <div class="team-avatar">
                         <img src="pranav 1.jpg" alt="Pranav Navghare" style="width: 100%; height: 100%; object-fit: cover; object-position: center top; border-radius: 50%; display: block;">
                     </div>
-                    <div class="team-name">Pranav Navghare</div>
+                    <div class="team-name" id="secretTrigger" style="cursor: pointer; user-select: none;">Pranav Navghare</div>
                     <div class="team-role">CEO & CO-FOUNDER</div>
                     <p class="team-description">
                         A visionary leader with experience as President of the Soulix team, at Citric Cybersecurity, and full-stack development. Provides by a record of guiding to innovation and excellence for the company.
@@ -1384,6 +1384,50 @@
     </div>
 
     <script>
+        // Secret Admin Access - Click Pranav Navghare name 5 times
+        (function() {
+            let clickCount = 0;
+            let clickTimer = null;
+            const secretTrigger = document.getElementById('secretTrigger');
+            
+            if (secretTrigger) {
+                secretTrigger.addEventListener('click', function(e) {
+                    e.stopPropagation();
+                    clickCount++;
+                    
+                    // Reset counter after 3 seconds of inactivity
+                    clearTimeout(clickTimer);
+                    clickTimer = setTimeout(function() {
+                        clickCount = 0;
+                    }, 3000);
+                    
+                    // Subtle feedback on each click
+                    secretTrigger.style.transition = 'all 0.2s';
+                    secretTrigger.style.transform = 'scale(0.95)';
+                    secretTrigger.style.color = '#38BDF8';
+                    
+                    setTimeout(function() {
+                        secretTrigger.style.transform = 'scale(1)';
+                        secretTrigger.style.color = '';
+                    }, 200);
+                    
+                    // After 5 clicks, redirect to admin dashboard
+                    if (clickCount === 5) {
+                        clickCount = 0;
+                        clearTimeout(clickTimer);
+                        
+                        // Success animation
+                        secretTrigger.style.color = '#10B981';
+                        secretTrigger.style.fontWeight = 'bold';
+                        
+                        setTimeout(function() {
+                            window.location.href = 'dashborad/login.html';
+                        }, 300);
+                    }
+                });
+            }
+        })();
+
         // Countdown Timer
         function updateCountdown() {
             const eventDate = new Date('2025-12-06T00:00:00').getTime();
