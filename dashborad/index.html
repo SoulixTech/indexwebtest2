@@ -513,6 +513,43 @@
         </div>
     </div>
 
+    <!-- Email Preview Modal -->
+    <div id="emailPreviewModal" class="modal">
+        <div class="modal-content-large">
+            <button class="modal-close" id="closeEmailPreviewModal">
+                <i class="fas fa-times"></i>
+            </button>
+            <div id="emailPreviewContent" style="background: #fff; padding: 20px; border-radius: 12px; max-height: 80vh; overflow-y: auto;">
+                <h3 style="margin-bottom: 20px; color: #333;">📧 Email Preview</h3>
+                <iframe id="emailPreviewFrame" style="width: 100%; min-height: 500px; border: none; border-radius: 8px;"></iframe>
+                <div style="margin-top: 20px; display: flex; gap: 12px; justify-content: flex-end;">
+                    <button class="btn-action btn-view" onclick="document.getElementById('emailPreviewModal').classList.remove('show')">
+                        <i class="fas fa-times"></i> Close
+                    </button>
+                    <button class="btn-action btn-approve" id="confirmSendEmail" style="display: none;">
+                        <i class="fas fa-paper-plane"></i> Send Email
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Admin Log Panel (Bottom Right) -->
+    <div id="adminLogPanel" class="admin-log-panel">
+        <div class="admin-log-header">
+            <h4><i class="fas fa-history"></i> Admin Log</h4>
+            <button class="admin-log-toggle" id="toggleAdminLog">
+                <i class="fas fa-chevron-down"></i>
+            </button>
+        </div>
+        <div class="admin-log-body" id="adminLogBody">
+            <div class="admin-log-empty">
+                <i class="fas fa-info-circle"></i>
+                <p>Activity log will appear here</p>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
     <div id="toast" class="toast">
         <div class="toast-icon"></div>
@@ -588,6 +625,7 @@
     
     <!-- Application Scripts (Optimized: Deferred loading) -->
     <script defer src="sheets-integration.js"></script>
+    <script defer src="admin-log-functions.js"></script>
     <script defer src="app.js"></script>
     <script>
         // Initialize auto-sync (Optimized)

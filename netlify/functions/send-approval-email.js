@@ -140,21 +140,21 @@ exports.handler = async (event, context) => {
         subject = '⚠️ Payment Issue — Action Required';
         let template = fs.existsSync(rejectTemplatePath) ? fs.readFileSync(rejectTemplatePath, 'utf8') : null;
         if (template) {
-          // Replace any double-curly placeholders with student name
-          template = template.replace(/{{[^}]*}}/g, studentName);
-          // Optionally insert rejection reason if present
-          if (rejectionReason) template = template.replace(/\bREJECTION_REASON\b/g, rejectionReason);
+          // Replace standardized placeholders
+          template = template.replace(/{{studentName}}/g, studentName);
+          template = template.replace(/{{courseName}}/g, courseName || 'IGNITE Training Program');
+          template = template.replace(/{{rejectionReason}}/g, rejectionReason || 'Please verify your payment details');
+          template = template.replace(/{{transactionId}}/g, transactionId ? `<br>Transaction ID: <b>${transactionId}</b>` : '');
           htmlContent = template;
         }
       } else {
         subject = '✅ Seat Confirmed — IGNITE Training Program';
         let template = fs.existsSync(approveTemplatePath) ? fs.readFileSync(approveTemplatePath, 'utf8') : null;
         if (template) {
-          // Replace name placeholders
-          template = template.replace(/{{[^}]*}}/g, studentName);
-          // Insert course and transaction details where appropriate
-          if (courseName) template = template.replace(/IGNITE Training Program/g, 'IGNITE Training Program');
-          template = template.replace(/YOUR_WHATSAPP_GROUP_LINK_HERE/g, 'https://wa.me/919356671329');
+          // Replace standardized placeholders
+          template = template.replace(/{{studentName}}/g, studentName);
+          template = template.replace(/{{courseName}}/g, courseName || 'IGNITE Training Program');
+          template = template.replace(/{{transactionId}}/g, transactionId ? `<b>Transaction ID:</b> ${transactionId}` : '');
           htmlContent = template;
         }
       }

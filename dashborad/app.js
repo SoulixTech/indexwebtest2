@@ -15,6 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
     initScrollProgress();
     initBackToTop();
     initKeyboardShortcuts();
+    initAdminLog();
     updateAllStats();
     renderApplications();
     renderRecentApplications();
@@ -677,34 +678,66 @@ function rejectApplication(id) {
     const app = applications.find(a => a.id === id);
     if (!app) return;
     
-    const reason = prompt(`Reject ${app.name}'s application?\n\nOptional: Enter rejection reason:`);
-    if (reason !== null) {
-        app.status = 'Rejected';
-        app.rejectedDate = new Date().toISOString();
-        app.rejectionReason = reason || 'Not specified';
-        saveData();
-        
-        // Send rejection notification (simulated)
-        sendRejectionNotification(app);
-        
-        // Haptic feedback on mobile
-        if (navigator.vibrate) {
-            navigator.vibrate(50); // Short vibration
+    // Show detailed confirmation dialog with application info
+    const dialogMessage = `
+REJECT APPLICATION
+
+Student: ${app.name}
+Email: ${app.email}
+Phone: ${app.phone}
+Course: ${app.course}
+${app.upiTransactionId ? 'Transaction ID: ' + app.upiTransactionId : ''}
+
+Do you want to preview the rejection email before sending?
+Click OK to preview, or Cancel to skip preview and reject immediately.
+    `.trim();
+    
+    if (confirm(dialogMessage)) {
+        // Preview email first
+        previewEmail(app, 'reject');
+    } else {
+        // Reject immediately with reason prompt
+        const reason = prompt(`Enter rejection reason for ${app.name}:`);
+        if (reason !== null) {
+            rejectApplicationWithReason(id, reason);
         }
-        
-        // Show toast
-        showToast('error', 'Application Rejected', `${app.name}'s application has been rejected and notified.`);
-        
-        // Update UI
-        updateAllStats();
-        renderApplications();
-        renderRecentApplications();
-        updateCharts();
     }
+}
+
+function rejectApplicationWithReason(id, reason) {
+    const app = applications.find(a => a.id === id);
+    if (!app) return;
+    
+    app.status = 'Rejected';
+    app.rejectedDate = new Date().toISOString();
+    app.rejectionReason = reason || 'Not specified';
+    saveData();
+    
+    // Send rejection notification
+    sendRejectionNotification(app);
+    
+    // Log activity
+    addAdminLog('error', 'Application Rejected', `${app.name} - ${app.course} - Reason: ${reason}`);
+    
+    // Haptic feedback on mobile
+    if (navigator.vibrate) {
+        navigator.vibrate(50);
+    }
+    
+    // Show toast
+    showToast('error', 'Application Rejected', `${app.name}'s application has been rejected and notified.`);
+    
+    // Update UI
+    updateAllStats();
+    renderApplications();
+    renderRecentApplications();
+    updateCharts();
 }
 
 // Notifications (Simulated Email/SMS)
 async function sendApprovalNotification(app) {
+    addAdminLog('info', 'Sending Approval Email', `Sending to ${app.email}...`);
+    
     // Send real email via Brevo API
     if (typeof window.sendApprovalEmail === 'function') {
         try {
@@ -718,18 +751,24 @@ async function sendApprovalNotification(app) {
             
             if (result.success) {
                 console.log('✅ Approval email sent to:', app.email);
+                addAdminLog('success', 'Email Sent Successfully', `✅ Approval email sent to ${app.name} (${app.email})`);
             } else {
                 console.warn('⚠️ Email sending failed:', result.error);
+                addAdminLog('error', 'Email Failed', `❌ Failed to send to ${app.email}: ${result.error}`);
             }
         } catch (error) {
             console.error('❌ Error sending email:', error);
+            addAdminLog('error', 'Email Error', `❌ Error sending to ${app.email}: ${error.message}`);
         }
     } else {
         console.warn('⚠️ Email function not available. Make sure sheets-integration.js is loaded.');
+        addAdminLog('warning', 'Email Function Unavailable', 'sheets-integration.js not loaded');
     }
 }
 
 function sendRejectionNotification(app) {
+    addAdminLog('info', 'Sending Rejection Email', `Sending to ${app.email}...`);
+    
     // Send rejection email using Netlify function (uses reject template)
     if (typeof window.sendApprovalEmail === 'function') {
         window.sendApprovalEmail(
@@ -740,11 +779,20 @@ function sendRejectionNotification(app) {
             'reject',
             app.rejectionReason || ''
         ).then(result => {
-            if (result && result.success) console.log('✅ Rejection email sent to:', app.email);
-            else console.warn('⚠️ Rejection email failed:', result && result.error);
-        }).catch(err => console.error('❌ Error sending rejection email:', err));
+            if (result && result.success) {
+                console.log('✅ Rejection email sent to:', app.email);
+                addAdminLog('success', 'Rejection Email Sent', `✅ Email sent to ${app.name} (${app.email})`);
+            } else {
+                console.warn('⚠️ Rejection email failed:', result && result.error);
+                addAdminLog('error', 'Email Failed', `❌ Failed to send rejection email: ${result && result.error}`);
+            }
+        }).catch(err => {
+            console.error('❌ Error sending rejection email:', err);
+            addAdminLog('error', 'Email Error', `❌ Error: ${err.message}`);
+        });
     } else {
         console.warn('⚠️ Email function not available. Make sure sheets-integration.js is loaded.');
+        addAdminLog('warning', 'Email Function Unavailable', 'sheets-integration.js not loaded');
     }
 }
 
