@@ -178,8 +178,16 @@ function convertRowToSupabaseFormat(row, index) {
     
     const getCourse = () => {
         const courseKeys = Object.keys(row).filter(k => 
-            k.toLowerCase().includes('course')
+            k.toLowerCase().includes('course') && 
+            !k.toLowerCase().includes('interested') &&
+            !k.toLowerCase().includes('which')
         );
+        
+        // Debug: Log what we found
+        if (courseKeys.length > 0) {
+            console.log(`📚 Course column found: "${courseKeys[0]}" = "${row[courseKeys[0]]}"`);
+        }
+        
         return courseKeys.length > 0 ? row[courseKeys[0]] : '';
     };
     
