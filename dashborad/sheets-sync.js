@@ -84,20 +84,48 @@ async function addNewEntriesToSupabase(sheetEntries) {
         const existingApps = window.DataManager.getAll();
         const existingIds = new Set(existingApps.map(app => app.id));
         
-        // Filter NEW entries
+        // Filter NEW entries and entries to UPDATE
         const newEntries = sheetEntries.filter(entry => !existingIds.has(entry.id));
+        const existingEntries = sheetEntries.filter(entry => existingIds.has(entry.id));
         
-        if (newEntries.length === 0) {
-            return; // No new entries
-        }
-        
-        console.log(`🆕 Adding ${newEntries.length} new entries to Supabase...`);
-        
-        // Get Supabase client (from data-manager.js)
+        // Get Supabase client
         const supabase = window.supabase.createClient(
             'https://xmtxeagxnqfczenqwizz.supabase.co',
             'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InhtdHhlYWd4bnFmY3plbnF3aXp6Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NjI0Mzg3MTgsImV4cCI6MjA3ODAxNDcxOH0.NUTpXhNfoXkcCrWhGE2-j4V6p9VydN6EkLPUCBVqeh8'
         );
+        
+        // UPDATE existing entries with correct data from sheets (fix "no" course issue)
+        if (existingEntries.length > 0) {
+            console.log(`🔄 Updating ${existingEntries.length} existing entries with latest sheet data...`);
+            for (const entry of existingEntries) {
+                const existingApp = existingApps.find(app => app.id === entry.id);
+                // Only update if status is still Pending (don't overwrite approved/rejected)
+                if (existingApp && existingApp.status === 'Pending') {
+                    await supabase
+                        .from('applications')
+                        .update({
+                            course: entry.course,
+                            phone: entry.phone,
+                            name: entry.name,
+                            email: entry.email,
+                            payment_type: entry.payment_type,
+                            upi_transaction_id: entry.upi_transaction_id
+                        })
+                        .eq('id', entry.id);
+                }
+            }
+            console.log(`✅ Updated ${existingEntries.length} applications`);
+        }
+        
+        if (newEntries.length === 0) {
+            // Reload even if only updates happened
+            if (existingEntries.length > 0 && window.DataManager && window.DataManager.reload) {
+                await window.DataManager.reload();
+            }
+            return;
+        }
+        
+        console.log(`🆕 Adding ${newEntries.length} new entries to Supabase...`);
         
         // Insert new entries
         const { data, error } = await supabase
