@@ -106,9 +106,9 @@ function addAdminLog(type, title, message, saveToSupabaseFlag = true) {
     // Update badge count in sidebar
     updateLogBadge();
     
-    // Save to Supabase if flag is true and function exists
-    if (saveToSupabaseFlag && typeof saveLogToSupabase === 'function') {
-        saveLogToSupabase(type, title, message).catch(err => {
+    // Save to Supabase using new DataManager
+    if (saveToSupabaseFlag && window.DataManager && window.DataManager.saveLog) {
+        window.DataManager.saveLog(type, title, message).catch(err => {
             console.error('Failed to save log to Supabase:', err);
         });
     }
