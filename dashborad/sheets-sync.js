@@ -177,18 +177,40 @@ function convertRowToSupabaseFormat(row, index) {
     };
     
     const getCourse = () => {
-        const courseKeys = Object.keys(row).filter(k => 
-            k.toLowerCase().includes('course') && 
-            !k.toLowerCase().includes('interested') &&
-            !k.toLowerCase().includes('which')
-        );
+        // Look for actual course selection columns - NOT goals/objectives
+        const courseKeys = Object.keys(row).filter(k => {
+            const lower = k.toLowerCase();
+            return (lower.includes('select') || lower.includes('choose') || lower.includes('which course')) && 
+                   lower.includes('course') &&
+                   !lower.includes('achieve') &&
+                   !lower.includes('hope') &&
+                   !lower.includes('goal');
+        });
         
-        // Debug: Log what we found
-        if (courseKeys.length > 0) {
-            console.log(`📚 Course column found: "${courseKeys[0]}" = "${row[courseKeys[0]]}"`);
+        // If no specific course selection column, try generic "course" but exclude goals
+        if (courseKeys.length === 0) {
+            const backupKeys = Object.keys(row).filter(k => {
+                const lower = k.toLowerCase();
+                return lower.includes('course') && 
+                       !lower.includes('achieve') &&
+                       !lower.includes('hope') &&
+                       !lower.includes('goal') &&
+                       !lower.includes('taking this');
+            });
+            if (backupKeys.length > 0) {
+                console.log(`📚 Course column: "${backupKeys[0]}" = "${row[backupKeys[0]]}"`);
+                return row[backupKeys[0]];
+            }
         }
         
-        return courseKeys.length > 0 ? row[courseKeys[0]] : '';
+        if (courseKeys.length > 0) {
+            console.log(`📚 Course column: "${courseKeys[0]}" = "${row[courseKeys[0]]}"`);
+            return row[courseKeys[0]];
+        }
+        
+        // Last resort: check all columns and log them for debugging
+        console.log('⚠️ Could not find course column. All columns:', Object.keys(row));
+        return '';
     };
     
     const getPaymentType = () => {
