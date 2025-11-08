@@ -587,6 +587,62 @@
         </div>
     </div>
 
+    <!-- Payment Confirmation Modal -->
+    <div id="paymentModal" class="modal">
+        <div class="modal-content" style="max-width: 500px;">
+            <button class="modal-close" onclick="closePaymentModal()">
+                <i class="fas fa-times"></i>
+            </button>
+            <div style="padding: 2rem;">
+                <div style="text-align: center; margin-bottom: 2rem;">
+                    <div style="display: inline-flex; align-items: center; justify-content: center; width: 64px; height: 64px; background: linear-gradient(135deg, #10b981 0%, #059669 100%); border-radius: 16px; margin-bottom: 1rem;">
+                        <i class="fas fa-check-circle" style="font-size: 32px; color: white;"></i>
+                    </div>
+                    <h2 style="font-size: 24px; font-weight: 700; color: var(--text-primary); margin-bottom: 0.5rem;">Approve Application</h2>
+                    <p style="color: var(--text-secondary); font-size: 14px;" id="paymentModalStudentName"></p>
+                </div>
+
+                <div style="background: var(--card-bg); padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                    <div style="display: grid; gap: 1rem; font-size: 14px;">
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--text-secondary);">Payment Type:</span>
+                            <strong id="paymentModalType" style="color: var(--text-primary);"></strong>
+                        </div>
+                        <div style="display: flex; justify-content: space-between;">
+                            <span style="color: var(--text-secondary);">UPI Transaction:</span>
+                            <strong id="paymentModalUPI" style="color: var(--text-primary);"></strong>
+                        </div>
+                        <div id="installmentInfo" style="display: none; flex-direction: column; gap: 0.5rem; padding-top: 1rem; border-top: 1px solid var(--border-color);">
+                            <div style="display: flex; justify-content: space-between;">
+                                <span style="color: var(--text-secondary);">Installments Paid:</span>
+                                <strong id="paymentModalInstallments" style="color: var(--text-primary);"></strong>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div style="margin-bottom: 1.5rem;">
+                    <label style="display: block; font-weight: 600; color: var(--text-primary); margin-bottom: 0.5rem; font-size: 14px;">
+                        <i class="fas fa-rupee-sign"></i> Confirm Payment Amount Received
+                    </label>
+                    <input type="number" id="paymentAmountInput" placeholder="Enter amount in ₹" 
+                           style="width: 100%; padding: 12px 16px; border: 2px solid var(--border-color); border-radius: 8px; font-size: 16px; font-weight: 600; transition: all 0.2s;"
+                           onfocus="this.style.borderColor='var(--primary-color)'; this.style.boxShadow='0 0 0 3px rgba(99, 102, 241, 0.1)'"
+                           onblur="this.style.borderColor='var(--border-color)'; this.style.boxShadow='none'">
+                </div>
+
+                <div style="display: flex; gap: 1rem;">
+                    <button class="btn-action btn-view" onclick="closePaymentModal()" style="flex: 1;">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
+                    <button class="btn-action btn-approve" onclick="confirmPaymentApproval()" style="flex: 1;">
+                        <i class="fas fa-check"></i> Confirm & Approve
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Toast Notification -->
     <div id="toast" class="toast">
         <div class="toast-icon"></div>

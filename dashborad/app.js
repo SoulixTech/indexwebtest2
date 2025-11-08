@@ -820,70 +820,94 @@ function viewApplication(id) {
     modal.classList.add('show');
 }
 
+// Global variable to store current approval application ID
+let currentApprovalId = null;
+
 function approveApplication(id) {
     const app = applications.find(a => a.id === id);
     if (!app) return;
     
-    // Payment confirmation dialog
-    let paymentConfirmed = false;
-    let paymentDetails = '';
+    // Store the application ID for later use
+    currentApprovalId = id;
     
+    // Populate the professional payment modal
+    document.getElementById('paymentModalStudentName').textContent = `${app.name} - ${app.course}`;
+    document.getElementById('paymentModalType').textContent = app.paymentType || 'Full Payment (one-time)';
+    document.getElementById('paymentModalUPI').textContent = app.upiTransactionId || 'Not provided';
+    
+    // Handle installment info
+    const installmentInfo = document.getElementById('installmentInfo');
     if (app.paymentType && app.paymentType.toLowerCase().includes('installment')) {
-        // Installment payment
-        const installmentAmount = prompt(
-            `Approve ${app.name}'s application?\n\n` +
-            `Payment Type: ${app.paymentType}\n` +
-            `Current Installments Paid: ${app.installmentsPaid || 0} / ${app.totalInstallments || 2}\n\n` +
-            `Enter installment amount received (or cancel):`
-        );
-        
-        if (installmentAmount !== null && installmentAmount.trim() !== '') {
-            app.installmentsPaid = (app.installmentsPaid || 0) + 1;
-            app.paymentAmount = installmentAmount;
-            app.paymentStatus = app.installmentsPaid >= app.totalInstallments ? 'Paid' : 'Installment';
-            paymentConfirmed = true;
-            paymentDetails = `Installment ${app.installmentsPaid}/${app.totalInstallments}: ₹${installmentAmount}`;
-        } else {
-            return; // Cancelled
-        }
+        installmentInfo.style.display = 'flex';
+        document.getElementById('paymentModalInstallments').textContent = 
+            `${app.installmentsPaid || 0} / ${app.totalInstallments || 2}`;
     } else {
-        // Full payment
-        const paymentAmount = prompt(
-            `Approve ${app.name}'s application?\n\n` +
-            `Payment Type: ${app.paymentType || 'Full Payment'}\n` +
-            `${app.upiTransactionId ? 'UPI Transaction ID: ' + app.upiTransactionId : ''}\n\n` +
-            `Confirm full payment amount received:`
-        );
-        
-        if (paymentAmount !== null && paymentAmount.trim() !== '') {
-            app.paymentAmount = paymentAmount;
-            app.paymentStatus = 'Paid';
-            paymentConfirmed = true;
-            paymentDetails = `Full Payment: ₹${paymentAmount}`;
-        } else {
-            return; // Cancelled
-        }
+        installmentInfo.style.display = 'none';
     }
     
-    if (paymentConfirmed) {
-        // Get device info for logging
-        const deviceInfo = JSON.parse(sessionStorage.getItem('deviceInfo') || '{}');
-        
-        // Prepare payment details for DataManager
-        const payment = {
-            amount: app.paymentAmount,
-            type: app.paymentType || 'Full Payment',
-            status: app.paymentStatus || 'Paid',
-            transactionId: app.upiTransactionId || null,
-            installmentsPaid: app.installmentsPaid || null,
-            totalInstallments: app.totalInstallments || null
-        };
-        
-        console.log('💾 Approving application via DataManager...', app.name);
-        
-        // Use DataManager to approve (handles all database operations)
-        if (window.DataManager) {
-            window.DataManager.approve(id, payment).then(result => {
+    // Clear previous input
+    document.getElementById('paymentAmountInput').value = '';
+    
+    // Show the professional modal
+    document.getElementById('paymentModal').classList.add('show');
+}
+
+function closePaymentModal() {
+    document.getElementById('paymentModal').classList.remove('show');
+    currentApprovalId = null;
+}
+
+function confirmPaymentApproval() {
+    if (!currentApprovalId) return;
+    
+    const app = applications.find(a => a.id === currentApprovalId);
+    if (!app) return;
+    
+    const paymentAmount = document.getElementById('paymentAmountInput').value.trim();
+    
+    if (!paymentAmount || isNaN(paymentAmount) || parseFloat(paymentAmount) <= 0) {
+        showToast('error', 'Invalid Amount', 'Please enter a valid payment amount');
+        return;
+    }
+    
+    // Close the payment modal
+    closePaymentModal();
+    
+    // Process the approval
+    const isInstallment = app.paymentType && app.paymentType.toLowerCase().includes('installment');
+    
+    if (isInstallment) {
+        app.installmentsPaid = (app.installmentsPaid || 0) + 1;
+        app.paymentAmount = paymentAmount;
+        app.paymentStatus = app.installmentsPaid >= app.totalInstallments ? 'Paid' : 'Installment';
+    } else {
+        app.paymentAmount = paymentAmount;
+        app.paymentStatus = 'Paid';
+    }
+    
+    // Now process the approval
+    processApproval(currentApprovalId, app);
+}
+
+function processApproval(id, app) {
+    // Get device info for logging
+    const deviceInfo = JSON.parse(sessionStorage.getItem('deviceInfo') || '{}');
+    
+    // Prepare payment details for DataManager
+    const payment = {
+        amount: app.paymentAmount,
+        type: app.paymentType || 'Full Payment',
+        status: app.paymentStatus || 'Paid',
+        transactionId: app.upiTransactionId || null,
+        installmentsPaid: app.installmentsPaid || null,
+        totalInstallments: app.totalInstallments || null
+    };
+    
+    console.log('💾 Approving application via DataManager...', app.name);
+    
+    // Use DataManager to approve (handles all database operations)
+    if (window.DataManager) {
+        window.DataManager.approve(id, payment).then(result => {
                 if (result.success) {
                     console.log('✅ Application approved successfully');
                     
