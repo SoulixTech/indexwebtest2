@@ -664,27 +664,24 @@
     <!-- Supabase Client Library -->
     <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
     
-    <!-- NEW CLEAN ARCHITECTURE -->
-    <script defer src="data-manager.js"></script>
-    <script defer src="sheets-sync.js"></script>
+    <!-- Dashboard Scripts -->
+    <script defer src="sheets-integration.js"></script>
     <script defer src="admin-log-functions.js"></script>
+    <script defer src="supabase-config.js"></script>
     <script defer src="app.js"></script>
     <script>
-        // Initialize new system
-        async function initSystem() {
-            if (window.DataManager && window.SheetsSync) {
-                console.log('🚀 Initializing clean system...');
-                await window.DataManager.init();
-                window.SheetsSync.start();
+        // Initialize auto-sync (Optimized)
+        function initSync() {
+            if (window.sheetIntegration) {
+                window.sheetIntegration.startAutoSync();
             } else {
-                setTimeout(initSystem, 100);
+                setTimeout(initSync, 50);
             }
         }
-        
         if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', initSystem);
+            document.addEventListener('DOMContentLoaded', initSync);
         } else {
-            initSystem();
+            initSync();
         }
     </script>
 
