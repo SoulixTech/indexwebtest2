@@ -109,7 +109,15 @@ async function addNewEntriesToSupabase(sheetEntries) {
                             name: entry.name,
                             email: entry.email,
                             payment_type: entry.payment_type,
-                            upi_transaction_id: entry.upi_transaction_id
+                            upi_transaction_id: entry.upi_transaction_id,
+                            technical_skills: entry.technical_skills,
+                            goals: entry.goals,
+                            year_of_study: entry.year_of_study,
+                            branch: entry.branch,
+                            department: entry.department,
+                            preferred_domain: entry.preferred_domain,
+                            financial_support: entry.financial_support,
+                            questions: entry.questions
                         })
                         .eq('id', entry.id);
                 }
@@ -292,7 +300,16 @@ function convertRowToSupabaseFormat(row, index) {
         total_installments: 2,
         rejection_reason: null,
         approved_by: null,
-        rejected_by: null
+        rejected_by: null,
+        // Additional fields from Google Form
+        technical_skills: row['What technical skills do you currently have?'] || null,
+        goals: row['What do you hope to achieve by taking this course?'] || null,
+        year_of_study: row['Which year are you currently in?'] || null,
+        branch: row['Your Branch'] || null,
+        department: row['Your course / department'] || null,
+        preferred_domain: row['Select Your Preferred Domain'] || null,
+        financial_support: row['Reason for choosing Financial support'] || null,
+        questions: row['Any questions?'] || null
     };
 }
 

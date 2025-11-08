@@ -242,7 +242,16 @@ function convertSupabaseToApp(supabaseRow) {
         totalInstallments: supabaseRow.total_installments || 2,
         rejectionReason: supabaseRow.rejection_reason,
         approvedBy: supabaseRow.approved_by ? parseJSON(supabaseRow.approved_by) : null,
-        rejectedBy: supabaseRow.rejected_by ? parseJSON(supabaseRow.rejected_by) : null
+        rejectedBy: supabaseRow.rejected_by ? parseJSON(supabaseRow.rejected_by) : null,
+        // Additional fields from Google Form
+        technicalSkills: supabaseRow.technical_skills,
+        goals: supabaseRow.goals,
+        yearOfStudy: supabaseRow.year_of_study,
+        branch: supabaseRow.branch,
+        department: supabaseRow.department,
+        preferredDomain: supabaseRow.preferred_domain,
+        financialSupport: supabaseRow.financial_support,
+        questions: supabaseRow.questions
     };
 }
 
