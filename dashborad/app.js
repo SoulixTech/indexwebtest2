@@ -559,8 +559,15 @@ function updateCourseStats() {
     const courses = ['Web Development', 'IoT & ESP32', 'C Programming', 'Python Programming'];
     
     courses.forEach(course => {
-        const approved = applications.filter(app => app.course === course && app.status === 'Approved').length;
-        const pending = applications.filter(app => app.course === course && app.status === 'Pending').length;
+        // Match course names with or without price suffix (e.g., "Web Development - ₹199")
+        const approved = applications.filter(app => {
+            const courseName = app.course ? app.course.split(' - ')[0] : '';
+            return courseName === course && app.status === 'Approved';
+        }).length;
+        const pending = applications.filter(app => {
+            const courseName = app.course ? app.course.split(' - ')[0] : '';
+            return courseName === course && app.status === 'Pending';
+        }).length;
         
         // Update enrollment counts
         document.querySelectorAll(`.stat-value[data-course="${course}"][data-status="Approved"]`).forEach(el => {
