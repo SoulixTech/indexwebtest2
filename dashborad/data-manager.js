@@ -356,9 +356,8 @@ async function savePayment(application, paymentDetails) {
             payment_status: paymentDetails.status || 'Paid',
             upi_transaction_id: application.upi_transaction_id,
             payment_date: new Date().toISOString(),
-            processed_by: sessionStorage.getItem('adminUsername') || 'Admin',
-            device_type: deviceInfo.deviceType,
-            browser: deviceInfo.browser
+            processed_by: sessionStorage.getItem('adminUsername') || 'Admin'
+            // Removed device_type and browser - columns don't exist in payments table
         };
         
         console.log('💰 Saving to payments table:', paymentData);
