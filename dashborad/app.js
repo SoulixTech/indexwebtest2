@@ -908,34 +908,39 @@ function processApproval(id, app) {
     // Use DataManager to approve (handles all database operations)
     if (window.DataManager) {
         window.DataManager.approve(id, payment).then(result => {
-                if (result.success) {
-                    console.log('✅ Application approved successfully');
-                    
-                    // Update local application object
-                    app.status = 'Approved';
-                    app.approvedDate = new Date().toISOString();
-                    app.approvedBy = {
-                        username: sessionStorage.getItem('adminUsername') || 'Admin',
-                        device: deviceInfo.deviceType || 'Unknown',
-                        browser: deviceInfo.browser || 'Unknown',
-                        timestamp: new Date().toISOString()
-                    };
-                    
-                    // Trigger UI update event
-                    window.dispatchEvent(new Event('dataUpdated'));
-                } else {
-                    console.error('❌ Approval failed:', result.error);
-                    showToast('error', 'Approval Failed', result.error);
-                    return;
-                }
-            }).catch(err => {
-                console.error('❌ DataManager.approve error:', err);
-                showToast('error', 'Database Error', 'Failed to save approval');
+            if (result.success) {
+                console.log('✅ Application approved successfully');
+                
+                // Update local application object
+                app.status = 'Approved';
+                app.approvedDate = new Date().toISOString();
+                app.approvedBy = {
+                    username: sessionStorage.getItem('adminUsername') || 'Admin',
+                    device: deviceInfo.deviceType || 'Unknown',
+                    browser: deviceInfo.browser || 'Unknown',
+                    timestamp: new Date().toISOString()
+                };
+                
+                // Trigger UI update event
+                window.dispatchEvent(new Event('dataUpdated'));
+            } else {
+                console.error('❌ Approval failed:', result.error);
+                showToast('error', 'Approval Failed', result.error);
                 return;
-            });
-        } else {
-            console.error('❌ DataManager not available!');
-        }
+            }
+        }).catch(err => {
+            console.error('❌ DataManager.approve error:', err);
+            showToast('error', 'Database Error', 'Failed to save approval');
+            return;
+        });
+    } else {
+        console.error('❌ DataManager not available!');
+    }
+    
+    // Format payment details for logging
+    const paymentDetails = payment.installmentsPaid 
+        ? `Installment ${payment.installmentsPaid}/${payment.totalInstallments}: ₹${payment.amount}`
+        : `Full Payment: ₹${payment.amount}`;
         
         // Log the approval action with details
         addAdminLog('success', '✅ Application Approved', 
