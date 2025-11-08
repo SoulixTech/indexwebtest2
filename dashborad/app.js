@@ -558,28 +558,14 @@ function animateValue(id, endValue, duration = 500) {
 function updateCourseStats() {
     const courses = ['Web Development', 'IoT & ESP32', 'C Programming', 'Python Programming'];
     
-    console.log('📊 Updating course stats...');
-    console.log('Total applications:', applications.length);
-    
-    // Debug: Show all statuses
-    const statusCounts = {};
-    applications.forEach(app => {
-        statusCounts[app.status] = (statusCounts[app.status] || 0) + 1;
-    });
-    console.log('Status breakdown:', statusCounts);
-    
     courses.forEach(course => {
         // Match course names with or without price suffix
         // Use startsWith() to handle any separator
         const approved = applications.filter(app => {
             if (!app.course) return false;
             const courseName = app.course.trim();
-            const match = (courseName === course || courseName.startsWith(course + ' ') || courseName.startsWith(course + '-')) 
+            return (courseName === course || courseName.startsWith(course + ' ') || courseName.startsWith(course + '-')) 
                           && app.status === 'Approved';
-            if (app.status === 'Approved') {
-                console.log(`    Checking "${courseName}" starts with "${course}" ? ${match}`);
-            }
-            return match;
         }).length;
         const pending = applications.filter(app => {
             if (!app.course) return false;
@@ -587,8 +573,6 @@ function updateCourseStats() {
             return (courseName === course || courseName.startsWith(course + ' ') || courseName.startsWith(course + '-')) 
                    && app.status === 'Pending';
         }).length;
-        
-        console.log(`  ${course}: ${approved} approved, ${pending} pending`);
         
         // Update enrollment counts
         document.querySelectorAll(`.stat-value[data-course="${course}"][data-status="Approved"]`).forEach(el => {
@@ -958,29 +942,12 @@ function rejectApplication(id) {
     const app = applications.find(a => a.id === id);
     if (!app) return;
     
-    // Show detailed confirmation dialog with application info
-    const dialogMessage = `
-REJECT APPLICATION
-
-Student: ${app.name}
-Email: ${app.email}
-Phone: ${app.phone}
-Course: ${app.course}
-${app.upiTransactionId ? 'Transaction ID: ' + app.upiTransactionId : ''}
-
-Do you want to preview the rejection email before sending?
-Click OK to preview, or Cancel to skip preview and reject immediately.
-    `.trim();
+    // Simple confirmation dialog
+    const dialogMessage = `Reject application from ${app.name} for ${app.course}?`;
     
     if (confirm(dialogMessage)) {
-        // Preview email first
-        previewEmail(app, 'reject');
-    } else {
-        // Reject immediately with reason prompt
-        const reason = prompt(`Enter rejection reason for ${app.name}:`);
-        if (reason !== null) {
-            rejectApplicationWithReason(id, reason);
-        }
+        // Reject immediately without asking for reason
+        rejectApplicationWithReason(id, 'Application rejected by admin');
     }
 }
 
