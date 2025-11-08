@@ -558,6 +558,9 @@ function animateValue(id, endValue, duration = 500) {
 function updateCourseStats() {
     const courses = ['Web Development', 'IoT & ESP32', 'C Programming', 'Python Programming'];
     
+    console.log('📊 Updating course stats...');
+    console.log('Total applications:', applications.length);
+    
     courses.forEach(course => {
         // Match course names with or without price suffix (e.g., "Web Development - ₹199")
         const approved = applications.filter(app => {
@@ -568,6 +571,8 @@ function updateCourseStats() {
             const courseName = app.course ? app.course.split(' - ')[0] : '';
             return courseName === course && app.status === 'Pending';
         }).length;
+        
+        console.log(`  ${course}: ${approved} approved, ${pending} pending`);
         
         // Update enrollment counts
         document.querySelectorAll(`.stat-value[data-course="${course}"][data-status="Approved"]`).forEach(el => {
