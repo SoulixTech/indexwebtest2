@@ -921,54 +921,51 @@ function processApproval(id, app) {
                     timestamp: new Date().toISOString()
                 };
                 
+                // Format payment details for logging
+                const paymentDetails = payment.installmentsPaid 
+                    ? `Installment ${payment.installmentsPaid}/${payment.totalInstallments}: ₹${payment.amount}`
+                    : `Full Payment: ₹${payment.amount}`;
+                
+                // Log the approval action with details
+                addAdminLog('success', '✅ Application Approved', 
+                    `${app.name} • ${app.course} • ${paymentDetails} • From ${deviceInfo.deviceType || 'Desktop'}`);
+                
+                // Send Email & SMS (simulated)
+                sendApprovalNotification(app);
+                
+                // Haptic feedback on mobile
+                if (navigator.vibrate) {
+                    navigator.vibrate([50, 30, 50]);
+                }
+                
+                // Confetti celebration!
+                createConfetti();
+                
+                // Show success toast with payment info
+                showToast('success', 'Application Approved!', 
+                    `${app.name} approved!\n${paymentDetails}\nEmail & SMS sent.`);
+                
                 // Trigger UI update event
                 window.dispatchEvent(new Event('dataUpdated'));
+                
+                // Force immediate UI update
+                setTimeout(() => {
+                    updateAllStats();
+                    renderApplications();
+                    renderRecentApplications();
+                    updateCharts();
+                    addTooltips();
+                }, 100);
             } else {
                 console.error('❌ Approval failed:', result.error);
                 showToast('error', 'Approval Failed', result.error);
-                return;
             }
         }).catch(err => {
             console.error('❌ DataManager.approve error:', err);
             showToast('error', 'Database Error', 'Failed to save approval');
-            return;
         });
     } else {
         console.error('❌ DataManager not available!');
-    }
-    
-    // Format payment details for logging
-    const paymentDetails = payment.installmentsPaid 
-        ? `Installment ${payment.installmentsPaid}/${payment.totalInstallments}: ₹${payment.amount}`
-        : `Full Payment: ₹${payment.amount}`;
-        
-        // Log the approval action with details
-        addAdminLog('success', '✅ Application Approved', 
-            `${app.name} • ${app.course} • ${paymentDetails} • From ${deviceInfo.deviceType || 'Desktop'}`);
-        
-        // Send Email & SMS (simulated)
-        sendApprovalNotification(app);
-        
-        // Haptic feedback on mobile
-        if (navigator.vibrate) {
-            navigator.vibrate([50, 30, 50]);
-        }
-        
-        // Confetti celebration!
-        createConfetti();
-        
-        // Show success toast with payment info
-        showToast('success', 'Application Approved!', 
-            `${app.name} approved!\n${paymentDetails}\nEmail & SMS sent.`);
-        
-        // Force immediate UI update
-        setTimeout(() => {
-            updateAllStats();
-            renderApplications();
-            renderRecentApplications();
-            updateCharts();
-            addTooltips();
-        }, 100);
     }
 }
 
