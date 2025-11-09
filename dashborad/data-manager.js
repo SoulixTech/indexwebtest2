@@ -125,20 +125,23 @@ async function approveApplication(id, paymentDetails) {
             .from('applications')
             .update(updateData)
             .eq('id', id)
-            .select()
-            .single();
+            .select();
         
         if (error) throw error;
+        
+        // Get the first result (should only be one)
+        const updatedApp = data && data.length > 0 ? data[0] : null;
+        if (!updatedApp) throw new Error('Failed to update application');
         
         // Update local data
         const index = applicationsData.findIndex(app => app.id === id);
         if (index !== -1) {
-            applicationsData[index] = convertSupabaseToApp(data);
+            applicationsData[index] = convertSupabaseToApp(updatedApp);
         }
         
         // Save to approved_applications table (critical - must succeed)
         try {
-            await saveToApprovedTable(data);
+            await saveToApprovedTable(updatedApp);
         } catch (approvedError) {
             console.error('CRITICAL: Failed to save to approved_applications table:', approvedError);
             // Rollback: Update status back to Pending
@@ -151,7 +154,7 @@ async function approveApplication(id, paymentDetails) {
         
         // Save payment transaction (critical - must succeed)
         try {
-            await savePayment(data, paymentDetails);
+            await savePayment(updatedApp, paymentDetails);
         } catch (paymentError) {
             console.error('CRITICAL: Failed to save payment record:', paymentError);
             // Payment tracking is critical, fail the approval
@@ -161,7 +164,7 @@ async function approveApplication(id, paymentDetails) {
         // Reload to ensure sync
         await loadAllData();
         
-        return { success: true, data };
+        return { success: true, data: updatedApp };
         
     } catch (error) {
         console.error('Approve error:', error);
@@ -193,20 +196,23 @@ async function rejectApplication(id, reason) {
             .from('applications')
             .update(updateData)
             .eq('id', id)
-            .select()
-            .single();
+            .select();
         
         if (error) throw error;
+        
+        // Get the first result (should only be one)
+        const updatedApp = data && data.length > 0 ? data[0] : null;
+        if (!updatedApp) throw new Error('Failed to update application');
         
         // Update local data
         const index = applicationsData.findIndex(app => app.id === id);
         if (index !== -1) {
-            applicationsData[index] = convertSupabaseToApp(data);
+            applicationsData[index] = convertSupabaseToApp(updatedApp);
         }
         
         // Save to rejected_applications table (critical - must succeed)
         try {
-            await saveToRejectedTable(data);
+            await saveToRejectedTable(updatedApp);
         } catch (rejectError) {
             console.error('CRITICAL: Failed to save to rejected_applications table:', rejectError);
             // Rollback: Update status back to Pending
@@ -220,7 +226,7 @@ async function rejectApplication(id, reason) {
         // Reload to ensure sync
         await loadAllData();
         
-        return { success: true, data };
+        return { success: true, data: updatedApp };
         
     } catch (error) {
         console.error('Reject error:', error);
