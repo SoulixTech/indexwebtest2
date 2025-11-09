@@ -54,7 +54,7 @@ export async function handler(event) {
 <body>
   <div class="container">
     <div class="logo-section">
-      <img src="https://lh3.googleusercontent.com/d/1QP4RpN3F1pc9lIN7lNRgCFYQIU-3skGH" alt="SOULIX Logo" />
+      <img src="https://pub-8c5bfca98c16425e8e4925af1d31c5a5.r2.dev/Soulix%20logo%20V0.6.png" alt="SOULIX Logo" />
     </div>
 
     <div class="content">
@@ -64,16 +64,14 @@ export async function handler(event) {
 
       <div class="success">
         ✅ Your payment has been successfully verified.<br>
-        🚀 Your seat for the ${cleanCourseName} is officially confirmed.
+        🚀 Your seat for the IGNITE Training Program is officially confirmed.
       </div>
 
       <div class="details-box">
         <b>Program Details:</b><br><br>
         📚 <b>${cleanCourseName}</b><br>
         🔥 Live project-based learning<br>
-        🧠 Includes: Front‑end + Back‑end + Database + Deployment + Portfolio building<br>
-        ${transactionIdText}<br><br>
-        ✅ Next steps will be sent shortly (WhatsApp + Email)
+        🧠 Includes: Front‑end + Back‑end + Database + Deployment + Portfolio building
       </div>
 
       
@@ -87,20 +85,15 @@ export async function handler(event) {
         <li>Certificate + Internship opportunity for top performers</li>
       </ul>
 
-      <p style="line-height:1.6;font-size:15px;color:#ddd;">
-You'll receive all important updates on <b>WhatsApp</b> — including session reminders, shared resources, and announcements.
-<br><br>
-Your <b>joining instructions</b> and course materials will be shared soon via <b>Email</b> and <b>WhatsApp</b>.
-<br><br>
+      <p style="line-height:1.6;font-size:15px;color:#ddd; text-align:left;">
+You'll receive all important updates on <b>WhatsApp</b> — including session reminders, shared resources, and announcements.<br><br>
+Your <b>joining instructions</b> and course materials will be shared soon via <b>Email</b> and <b>WhatsApp</b>.<br><br>
 If you need any help at any point, just reply — we're always here to support you.
 </p>
 
-      <p>If you have questions or want to stay updated, join our official WhatsApp community group:</p>
-
-<a href="https://chat.whatsapp.com/D76OYRDVQYqD4RVmrBYuDS" class="btn whatsapp" style="background:#25d366;color:#fff !important;">✅ Join WhatsApp Group</a>
-<br>
-
-      <a href="https://wa.me/919356671329" class="btn whatsapp">📱 Chat on WhatsApp</a>
+      
+<a href="https://gogroup.soulix.tech/*" class="btn whatsapp" style="background:#25d366;color:#fff !important;">✅ Join WhatsApp Group</a>
+<a href="https://go.soulix.tech/*" class="btn whatsapp">📱 Chat on WhatsApp</a>
 
       <br>
       <p>Regards,<br>
@@ -109,13 +102,15 @@ If you need any help at any point, just reply — we're always here to support y
     </div>
 <footer style="text-align:center;margin:25px 0;font-size:12px;color:#777;">
   © 2025 SOULIX — All rights reserved.<br>
-  <div style="margin-top:15px;">
-    <a href="https://instagram.com" style="margin:0 6px;"><img src="https://upload.wikimedia.org/wikipedia/commons/a/a5/Instagram_icon.png" width="22"></a>
-    <a href="https://linkedin.com" style="margin:0 6px;"><img src="https://upload.wikimedia.org/wikipedia/commons/c/ca/LinkedIn_logo_initials.png" width="22"></a>
-    <a href="https://youtube.com" style="margin:0 6px;"><img src="https://upload.wikimedia.org/wikipedia/commons/b/b8/YouTube_Logo_2017.svg" width="50"></a>
-  </div>
+  <a href="https://golink.soulix.tech/*" style="margin:0 6px;"><img src="https://pub-8c5bfca98c16425e8e4925af1d31c5a5.r2.dev/linkdin.png" width="22"></a>
+  <a href="https://goinsta.soulix.tech/*" style="margin:0 6px;"><img src="https://pub-8c5bfca98c16425e8e4925af1d31c5a5.r2.dev/insta.jpeg" width="22"></a>
+  <a href="https://gox.soulix.tech/*" style="margin:0 6px;"><img src="https://pub-8c5bfca98c16425e8e4925af1d31c5a5.r2.dev/x.png" width="22"></a>
 </footer>
 </body>
+
+
+
+
 </html>`
       : `<!DOCTYPE html>
 <html lang="en">
@@ -138,7 +133,7 @@ If you need any help at any point, just reply — we're always here to support y
 <body>
 <div class="container">
 <div class="logo">
-  <img src="https://lh3.googleusercontent.com/d/1QP4RpN3F1pc9lIN7lNRgCFYQIU-3skGH" alt="SOULIX Logo" />
+  <img src="https://pub-8c5bfca98c16425e8e4925af1d31c5a5.r2.dev/Soulix%20logo%20V0.6.png" alt="SOULIX Logo" />
 </div>
 
 <h2 style="color:#ff4444; text-align:center;">⚠️ Payment Verification Failed</h2>
@@ -161,7 +156,7 @@ Please resend your payment screenshot or transaction proof so we can proceed wit
 <b>You can reply to this email and attach the screenshot directly,</b><br>or send it on WhatsApp using the button below.
 </p>
 
-<a href="https://wa.me/919356671329" class="btn">📱 Send Screenshot on WhatsApp</a>
+<a href="https://go.soulix.tech/*" class="btn">📱 Send Screenshot on WhatsApp</a>
 
 <p style="font-size:14px; margin-top:25px; text-align:center;">OR</p>
 
