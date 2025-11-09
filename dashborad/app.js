@@ -862,6 +862,9 @@ function confirmPaymentApproval() {
         return;
     }
     
+    // Store ID before closing modal (closePaymentModal sets it to null)
+    const approvalId = currentApprovalId;
+    
     // Close the payment modal
     closePaymentModal();
     
@@ -877,8 +880,8 @@ function confirmPaymentApproval() {
         app.paymentStatus = 'Paid';
     }
     
-    // Now process the approval
-    processApproval(currentApprovalId, app);
+    // Now process the approval (use stored ID, not currentApprovalId which is now null)
+    processApproval(approvalId, app);
 }
 
 function processApproval(id, app) {
