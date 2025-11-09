@@ -961,17 +961,36 @@ function processApproval(id, app) {
     }
 }
 
+// Reject application - show beautiful confirmation modal
+let currentRejectionId = null;
+
 function rejectApplication(id) {
     const app = applications.find(a => a.id === id);
     if (!app) return;
     
-    // Simple confirmation dialog
-    const dialogMessage = `Reject application from ${app.name} for ${app.course}?`;
+    // Store the ID for later confirmation
+    currentRejectionId = id;
     
-    if (confirm(dialogMessage)) {
-        // Reject immediately without asking for reason
-        rejectApplicationWithReason(id, 'Application rejected by admin');
-    }
+    // Populate the rejection modal
+    document.getElementById('rejectionModalStudentInfo').textContent = `${app.name} - ${app.course}`;
+    
+    // Show the modal
+    document.getElementById('rejectionModal').classList.add('show');
+}
+
+function closeRejectionModal() {
+    document.getElementById('rejectionModal').classList.remove('show');
+    currentRejectionId = null;
+}
+
+function confirmRejection() {
+    if (!currentRejectionId) return;
+    
+    // Close the modal
+    closeRejectionModal();
+    
+    // Process the rejection
+    rejectApplicationWithReason(currentRejectionId, 'Application rejected by admin');
 }
 
 function rejectApplicationWithReason(id, reason) {
