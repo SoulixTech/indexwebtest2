@@ -23,6 +23,9 @@ export async function handler(event) {
       };
     }
 
+    // Remove price from course name (e.g., "Web Development - ₹199" → "Web Development")
+    const cleanCourseName = course.replace(/\s*[-–—]\s*₹\d+/g, '').trim();
+
     // Generate email HTML based on action using your custom templates
     const transactionIdText = upiTransactionId ? `💳 <b>Transaction ID:</b> ${upiTransactionId}` : '';
     
@@ -61,12 +64,12 @@ export async function handler(event) {
 
       <div class="success">
         ✅ Your payment has been successfully verified.<br>
-        🚀 Your seat for the ${course} is officially confirmed.
+        🚀 Your seat for the ${cleanCourseName} is officially confirmed.
       </div>
 
       <div class="details-box">
         <b>Program Details:</b><br><br>
-        📚 <b>${course}</b><br>
+        📚 <b>${cleanCourseName}</b><br>
         🔥 Live project-based learning<br>
         🧠 Includes: Front‑end + Back‑end + Database + Deployment + Portfolio building<br>
         ${transactionIdText}<br><br>
@@ -142,7 +145,7 @@ If you need any help at any point, just reply — we're always here to support y
 <p>Hi <b>${name}</b>,</p>
 
 <div class="alert">
-  ❌ We could not verify your payment for <b>${course}</b>.<br><br>
+  ❌ We could not verify your payment for <b>${cleanCourseName}</b>.<br><br>
   <b>Reason:</b> ${notes || 'Payment verification failed'}
   <br><br>
   Common issues:
@@ -182,8 +185,8 @@ support@soulix.tech
       from: "SOULIX <support@soulix.tech>",
       to: email,
       subject: action === "approve"
-        ? `🎉 Seat Confirmed — Welcome to ${course}`
-        : `Application Update for ${course}`,
+        ? `🎉 Seat Confirmed — Welcome to ${cleanCourseName}`
+        : `Application Update for ${cleanCourseName}`,
       html
     });
 
