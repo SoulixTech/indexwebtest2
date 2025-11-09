@@ -989,11 +989,14 @@ function closeRejectionModal() {
 function confirmRejection() {
     if (!currentRejectionId) return;
     
+    // Store ID before closing modal (closeRejectionModal sets it to null)
+    const rejectionId = currentRejectionId;
+    
     // Close the modal
     closeRejectionModal();
     
-    // Process the rejection
-    rejectApplicationWithReason(currentRejectionId, 'Application rejected by admin');
+    // Process the rejection (use stored ID, not currentRejectionId which is now null)
+    rejectApplicationWithReason(rejectionId, 'Application rejected by admin');
 }
 
 function rejectApplicationWithReason(id, reason) {
