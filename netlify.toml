@@ -53,15 +53,20 @@
   status = 200
   force = true
 
-# Dashboard - Admin panel
+# Dashboard - Admin panel (all paths)
 [[redirects]]
-  from = "/dashboard"
-  to = "/main-site/dashborad/index.html"
+  from = "/dashborad/*"
+  to = "/main-site/dashborad/:splat"
   status = 200
 
 [[redirects]]
   from = "/dashboard/*"
   to = "/main-site/dashborad/:splat"
+  status = 200
+
+[[redirects]]
+  from = "/dashboard"
+  to = "/main-site/dashborad/index.html"
   status = 200
 
 # Function configuration - Optimized
